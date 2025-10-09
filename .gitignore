@@ -1,0 +1,21 @@
+# ===== Node.js 関連 =====
+node_modules/
+
+# ===== ビルド・出力物 =====
+dist/
+build/
+
+# ===== 環境変数ファイル =====
+.env
+.env.local
+.env.development
+.env.production
+
+# ===== OS・エディタ関連 =====
+.DS_Store
+.vscode/
+.idea/
+
+# ===== テストカバレッジなど =====
+coverage/
+.nyc_output/
