@@ -2,14 +2,10 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "./firebaseConfig";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import { SIGNUP_INITIAL_VALUES, SIGNUP_MESSAGE } from "./constants";
 
 export const SignUp = () => {
-  const initialsValues = {
-    name: "",
-    email: "",
-    password: "",
-  };
-  const [formValues, setFormValues] = useState(initialsValues);
+  const [formValues, setFormValues] = useState(SIGNUP_INITIAL_VALUES);
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -35,15 +31,10 @@ export const SignUp = () => {
         email: formValues.email,
         createdAt: serverTimestamp(),
       });
-      setFormValues(initialsValues);
+      setFormValues(SIGNUP_INITIAL_VALUES);
       setMessage("登録が完了しました");
     } catch (error) {
-      const msg = {
-        "auth/email-already-in-use":
-          "このメールアドレスは既に使用されています。",
-        "auth/invalid-email": "無効なメールアドレスです。",
-        "auth/weak-password": "パスワードは6文字以上で設定してください。",
-      };
+      const msg = SIGNUP_MESSAGE;
       setMessage(
         msg[error.code] ?? "登録に失敗しました。もう一度お試しください。"
       );
