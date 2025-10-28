@@ -2,7 +2,11 @@ import { useState } from "react";
 import { db, auth } from "./firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { SIGNUP_INITIAL_VALUES, SIGNUP_MESSAGE } from "../constants";
+import {
+  SIGNUP_INITIAL_VALUES,
+  SIGNUP_MESSAGE,
+  VALIDATE_SIGN_APP,
+} from "../constants";
 import { useNavigate } from "react-router-dom";
 
 export const SignApp = () => {
@@ -19,34 +23,10 @@ export const SignApp = () => {
       [name]: value,
     }));
   };
-  // 入力値のバリデーションチェック
-  const validate = (values) => {
-    const errors = {};
-    const regex =
-      /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/;
-    if (!values.username) {
-      errors.username = "ユーザー名を入力してください";
-    }
-    if (!values.email) {
-      errors.email = "メールアドレスを入力してください";
-    } else if (!values.email.includes("@")) {
-      errors.email = "@を使用してください";
-    } else if (!regex.test(values.email)) {
-      errors.email = "正しいメールアドレスを入力してください";
-    }
-    if (!values.password) {
-      errors.password = "パスワードを入力してください";
-    } else if (values.password.length < 6) {
-      errors.password = "パスワードは6文字以上15文字以下で設定してください";
-    } else if (values.password.length > 15) {
-      errors.password = "パスワードは15文字以下で設定してください";
-    }
-    return errors;
-  };
   //Firebase Authenticationでユーザー登録
   const onSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validate(formValues);
+    const validationErrors = VALIDATE_SIGN_APP(formValues);
     if (Object.keys(validationErrors).length > 0) {
       setFormErrors(validationErrors);
       setMessage("");
@@ -91,7 +71,7 @@ export const SignApp = () => {
       <h1>登録フォーム</h1>
       <hr />
       <form onSubmit={onSubmit} noValidate>
-        <label>ユーザー名</label>
+        <label htmlFor="username">ユーザー名</label>
         <input
           type="text"
           name="username"
@@ -101,7 +81,7 @@ export const SignApp = () => {
         />
         <p>{formErrors.username}</p>
         <br />
-        <label>メールアドレス</label>
+        <label htmlFor="email">メールアドレス</label>
         <input
           type="email"
           name="email"
@@ -111,7 +91,7 @@ export const SignApp = () => {
         />
         <p>{formErrors.email}</p>
         <br />
-        <label>パスワード</label>
+        <label htmlFor="password">パスワード</label>
         <input
           type={showPassword ? "text" : "password"}
           name="password"
