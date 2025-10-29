@@ -5,7 +5,7 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import {
   SIGNUP_INITIAL_VALUES,
   SIGNUP_MESSAGE,
-  VALIDATE_SIGN_APP,
+  VALIDATE_MESSAGE,
 } from "../constants";
 import { useNavigate } from "react-router-dom";
 
@@ -23,10 +23,36 @@ export const SignApp = () => {
       [name]: value,
     }));
   };
+  //バリデーションチェック
+
+  const validateSignApp = (values) => {
+    const errors = {};
+    const regex =
+      /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/;
+    if (!values.username) {
+      errors.username = VALIDATE_MESSAGE.USERNAME_REQUIRED;
+    }
+    if (!values.email) {
+      errors.email = VALIDATE_MESSAGE.EMAIL_REQUIRED;
+    } else if (!values.email.includes("@")) {
+      errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_AT;
+    } else if (!regex.test(values.email)) {
+      errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_CORRECT;
+    }
+    if (!values.password) {
+      errors.password = VALIDATE_MESSAGE.PASSWORD_REQUIRED;
+    } else if (values.password.length < 6) {
+      errors.password = VALIDATE_MESSAGE.PASSWORD_SHORT;
+    } else if (values.password.length > 15) {
+      errors.password = VALIDATE_MESSAGE.PASSWORD_LONG;
+    }
+    return errors;
+  };
+
   //Firebase Authenticationでユーザー登録
   const onSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = VALIDATE_SIGN_APP(formValues);
+    const validationErrors = validateSignApp(formValues);
     if (Object.keys(validationErrors).length > 0) {
       setFormErrors(validationErrors);
       setMessage("");
