@@ -2,11 +2,7 @@ import { useState } from "react";
 import { db, auth } from "./firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import {
-  SIGNUP_INITIAL_VALUES,
-  SIGNUP_MESSAGE,
-  VALIDATE_MESSAGE,
-} from "../constants";
+import { SIGNUP_INITIAL_VALUES, VALIDATE_MESSAGE } from "../constants";
 import { useNavigate } from "react-router-dom";
 
 export const SignApp = () => {
@@ -44,7 +40,7 @@ export const SignApp = () => {
     } else if (values.password.length < 6) {
       errors.password = VALIDATE_MESSAGE.PASSWORD_SHORT;
     } else if (values.password.length > 15) {
-      errors.password = VALIDATE_MESSAGE.PASSWORD_LONG;
+      errors.password = VALIDATE_MESSAGE.PASSWORD_SHORT;
     }
     return errors;
   };
@@ -80,7 +76,10 @@ export const SignApp = () => {
       setMessage("登録が完了しました。");
       navigate("/login");
     } catch (error) {
-      const errorMsg = SIGNUP_MESSAGE;
+      const errorMsg = {
+        "auth/email-already-in-use": VALIDATE_MESSAGE.EMAIL_MESSAGE_IN_USE,
+        "auth/invalid-email": VALIDATE_MESSAGE.EMAIL_MESSAGE_INVALID,
+      };
       setMessage(
         errorMsg[error.code] ?? "登録に失敗しました。再度お試しください。"
       );

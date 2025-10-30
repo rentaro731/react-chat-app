@@ -4,11 +4,6 @@ export const SIGNUP_INITIAL_VALUES = {
   password: "",
 };
 
-export const SIGNUP_MESSAGE = {
-  "auth/email-already-in-use": "登録に失敗しました。再度お試しください。",
-  "auth/invalid-email": "無効なメールアドレスです。",
-};
-
 export const VALIDATE_MESSAGE = {
   USERNAME_REQUIRED: "ユーザー名を入力してください",
 
@@ -22,5 +17,7 @@ export const VALIDATE_MESSAGE = {
 
   PASSWORD_SHORT: "パスワードは6文字以上15文字以下で設定してください",
 
-  PASSWORD_LONG: "パスワードは15文字以下で設定してください",
+  EMAIL_MESSAGE_IN_USE: "登録に失敗しました。再度お試しください。",
+
+  EMAIL_MESSAGE_INVALID: "無効なメールアドレスです。",
 };
