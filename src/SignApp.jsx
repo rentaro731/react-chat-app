@@ -38,9 +38,9 @@ export const SignApp = () => {
     if (!values.password) {
       errors.password = VALIDATE_MESSAGE.PASSWORD_REQUIRED;
     } else if (values.password.length < 6) {
-      errors.password = VALIDATE_MESSAGE.PASSWORD_SHORT;
+      errors.password = VALIDATE_MESSAGE.PASSWORD_NUMBER_LIMIT;
     } else if (values.password.length > 15) {
-      errors.password = VALIDATE_MESSAGE.PASSWORD_SHORT;
+      errors.password = VALIDATE_MESSAGE.PASSWORD_NUMBER_LIMIT;
     }
     return errors;
   };
@@ -76,13 +76,11 @@ export const SignApp = () => {
       setMessage("登録が完了しました。");
       navigate("/login");
     } catch (error) {
-      const errorMsg = {
-        "auth/email-already-in-use": VALIDATE_MESSAGE.EMAIL_MESSAGE_IN_USE,
-        "auth/invalid-email": VALIDATE_MESSAGE.EMAIL_MESSAGE_INVALID,
-      };
-      setMessage(
-        errorMsg[error.code] ?? "登録に失敗しました。再度お試しください。"
-      );
+      if (error.code === "auth/email-already-in-use") {
+        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_SERVER_ERROR);
+      } else if (error.code === "auth/invalid-email") {
+        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_INVALID);
+      }
     } finally {
       setSending(false);
     }
