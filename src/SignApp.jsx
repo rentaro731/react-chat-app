@@ -2,7 +2,7 @@ import { useState } from "react";
 import { db, auth } from "./firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { SIGNUP_INITIAL_VALUES, SIGNUP_MESSAGE } from "../constants";
+import { SIGNUP_INITIAL_VALUES, VALIDATE_MESSAGE } from "../constants";
 import { useNavigate } from "react-router-dom";
 
 export const SignApp = () => {
@@ -19,34 +19,34 @@ export const SignApp = () => {
       [name]: value,
     }));
   };
-  // 入力値のバリデーションチェック
-  const validate = (values) => {
+  //バリデーションチェック
+  const validateSignApp = (values) => {
     const errors = {};
     const regex =
       /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/;
     if (!values.username) {
-      errors.username = "ユーザー名を入力してください";
+      errors.username = VALIDATE_MESSAGE.USERNAME_REQUIRED;
     }
     if (!values.email) {
-      errors.email = "メールアドレスを入力してください";
+      errors.email = VALIDATE_MESSAGE.EMAIL_REQUIRED;
     } else if (!values.email.includes("@")) {
-      errors.email = "@を使用してください";
+      errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_AT;
     } else if (!regex.test(values.email)) {
-      errors.email = "正しいメールアドレスを入力してください";
+      errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_CORRECT;
     }
     if (!values.password) {
-      errors.password = "パスワードを入力してください";
+      errors.password = VALIDATE_MESSAGE.PASSWORD_REQUIRED;
     } else if (values.password.length < 6) {
-      errors.password = "パスワードは6文字以上15文字以下で設定してください";
+      errors.password = VALIDATE_MESSAGE.PASSWORD_NUMBER_LIMIT;
     } else if (values.password.length > 15) {
-      errors.password = "パスワードは15文字以下で設定してください";
+      errors.password = VALIDATE_MESSAGE.PASSWORD_NUMBER_LIMIT;
     }
     return errors;
   };
   //Firebase Authenticationでユーザー登録
   const onSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validate(formValues);
+    const validationErrors = validateSignApp(formValues);
     if (Object.keys(validationErrors).length > 0) {
       setFormErrors(validationErrors);
       setMessage("");
@@ -74,10 +74,13 @@ export const SignApp = () => {
       setMessage("登録が完了しました。");
       navigate("/login");
     } catch (error) {
-      const errorMsg = SIGNUP_MESSAGE;
-      setMessage(
-        errorMsg[error.code] ?? "登録に失敗しました。再度お試しください。"
-      );
+      if (error.code === "auth/email-already-in-use") {
+        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_SERVER_ERROR);
+      } else if (error.code === "auth/invalid-email") {
+        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_INVALID);
+      } else {
+        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_SERVER_ERROR);
+      }
     } finally {
       setSending(false);
     }
@@ -91,30 +94,33 @@ export const SignApp = () => {
       <h1>登録フォーム</h1>
       <hr />
       <form onSubmit={onSubmit} noValidate>
-        <label>ユーザー名</label>
+        <label htmlFor="username">ユーザー名</label>
         <input
           type="text"
           name="username"
+          id="username"
           placeholder="ユーザー名"
           value={formValues.username}
           onChange={handleChange}
         />
         <p>{formErrors.username}</p>
         <br />
-        <label>メールアドレス</label>
+        <label htmlFor="email">メールアドレス</label>
         <input
           type="email"
           name="email"
+          id="email"
           placeholder="@gmail.com"
           value={formValues.email}
           onChange={handleChange}
         />
         <p>{formErrors.email}</p>
         <br />
-        <label>パスワード</label>
+        <label htmlFor="password">パスワード</label>
         <input
           type={showPassword ? "text" : "password"}
           name="password"
+          id="password"
           placeholder="パスワード"
           value={formValues.password}
           onChange={handleChange}

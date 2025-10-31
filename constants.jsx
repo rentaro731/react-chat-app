@@ -3,9 +3,30 @@ export const SIGNUP_INITIAL_VALUES = {
   email: "",
   password: "",
 };
+export const LOGIN_INITIAL_VALUES = {
+  email: "",
+  password: "",
+};
 
-export const SIGNUP_MESSAGE = {
-  "auth/email-already-in-use":
-    "メールアドレスまたはパスワードが間違っています。",
-  "auth/invalid-email": "無効なメールアドレスです。",
+// 入力値のバリデーションチェック及びエラーメッセージ
+export const VALIDATE_MESSAGE = {
+  USERNAME_REQUIRED: "ユーザー名を入力してください",
+
+  EMAIL_REQUIRED: "メールアドレスを入力してください",
+
+  EMAIL_MESSAGE_AT: "@を使用してください",
+
+  EMAIL_MESSAGE_CORRECT: "正しいメールアドレスを入力してください",
+
+  PASSWORD_REQUIRED: "パスワードを入力してください",
+
+  PASSWORD_NUMBER_LIMIT: "パスワードは6文字以上15文字以下で設定してください",
+
+  EMAIL_MESSAGE_SERVER_ERROR: "登録に失敗しました。再度お試しください。",
+
+  EMAIL_MESSAGE_INVALID: "無効なメールアドレスです。",
+
+  WRONG_PASSWORD: "メールアドレスまたはパスワードが間違っています。",
+
+  LOGIN_FAILED: "ログインに失敗しました。再度お試しください。",
 };
