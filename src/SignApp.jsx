@@ -80,6 +80,8 @@ export const SignApp = () => {
         setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_SERVER_ERROR);
       } else if (error.code === "auth/invalid-email") {
         setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_INVALID);
+      } else {
+        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_SERVER_ERROR);
       }
     } finally {
       setSending(false);
