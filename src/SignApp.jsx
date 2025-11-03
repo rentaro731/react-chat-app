@@ -43,6 +43,7 @@ export const SignApp = () => {
     }
     return errors;
   };
+
   //Firebase Authenticationでユーザー登録
   const onSubmit = async (e) => {
     e.preventDefault();
