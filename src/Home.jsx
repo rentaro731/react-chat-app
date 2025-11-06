@@ -7,6 +7,8 @@ export const Home = () => {
       <Link to="/login">アカウントをお持ちの方はこちらに</Link>
       <br />
       <Link to="/sign">アカウントを新規作成</Link>
+      <br />
+      <Link to="/GoogleLogin">Googleアカウントでログイン</Link>
     </div>
   );
 };

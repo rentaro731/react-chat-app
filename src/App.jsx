@@ -4,8 +4,9 @@ import { Login } from "./Login";
 import { SignApp } from "./SignApp";
 import { Home } from "./Home";
 import { PublicRoute } from "./PublicRoute";
-import PrivateRoute from "./PrivateRoute";
+import { PrivateRoute } from "./PrivateRoute";
 import { Chat } from "./Chat";
+import { GoogleLogin } from "./GoogleLogin";
 function App() {
   return (
     <div>
@@ -14,10 +15,16 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/sign" element={<SignApp />} />
           <Route path="/" element={<Home />} />
+          <Route path="googleLogin" element={<GoogleLogin />} />
 
-          <Route path="/publicRoute" element={<PublicRoute />} />
-          <Route path="/privateRoute" element={<PrivateRoute />} />
-          <Route path="/chat" element={<Chat />} />
+          <Route
+            path="/chat"
+            element={
+              <PrivateRoute>
+                <Chat />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </div>
