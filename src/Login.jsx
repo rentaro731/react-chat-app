@@ -21,13 +21,13 @@ export const Login = () => {
   //バリデーションチェック
   const validateLogin = (values) => {
     const errors = {};
-    const regex =
-      /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/;
     if (!values.email) {
       errors.email = VALIDATE_MESSAGE.EMAIL_REQUIRED;
-    } else if (!values.email.includes("@")) {
+    }
+    if (!values.email.includes("@")) {
       errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_AT;
-    } else if (!regex.test(values.email)) {
+    }
+    if (!VALIDATE_MESSAGE.REGEX.test(values.email)) {
       errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_CORRECT;
     }
     if (!values.password) {
@@ -61,9 +61,11 @@ export const Login = () => {
     } catch (error) {
       if (error.code === "auth/wrong-password") {
         setMessage(VALIDATE_MESSAGE.WRONG_PASSWORD);
-      } else if (error.code === "auth/invalid-email") {
+      }
+      if (error.code === "auth/invalid-email") {
         setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_INVALID);
-      } else if (error.code === "auth/invalid-credential") {
+      }
+      if (error.code === "auth/invalid-credential") {
         setMessage(VALIDATE_MESSAGE.WRONG_PASSWORD);
       } else {
         setMessage(VALIDATE_MESSAGE.LOGIN_FAILED);

@@ -29,4 +29,6 @@ export const VALIDATE_MESSAGE = {
   WRONG_PASSWORD: "メールアドレスまたはパスワードが間違っています。",
 
   LOGIN_FAILED: "ログインに失敗しました。再度お試しください。",
+  REGEX:
+    /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/,
 };
