@@ -2,7 +2,12 @@ import { useState } from "react";
 import { db, auth } from "./firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { SIGNUP_INITIAL_VALUES, VALIDATE_MESSAGE } from "../constants";
+import {
+  SIGNUP_INITIAL_VALUES,
+  VALIDATE_MESSAGE,
+  FETCH_AUTH_ERROR,
+  REGEX,
+} from "../constants";
 import { useNavigate } from "react-router-dom";
 
 export const SignApp = () => {
@@ -31,7 +36,7 @@ export const SignApp = () => {
     if (!values.email.includes("@")) {
       errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_AT;
     }
-    if (!VALIDATE_MESSAGE.REGEX.test(values.email)) {
+    if (!REGEX.test(values.email)) {
       errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_CORRECT;
     }
     if (!values.password) {
@@ -78,12 +83,12 @@ export const SignApp = () => {
       navigate("/login");
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
-        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_SERVER_ERROR);
+        setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_SERVER_ERROR);
       }
       if (error.code === "auth/invalid-email") {
-        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_INVALID);
+        setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_INVALID);
       } else {
-        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_SERVER_ERROR);
+        setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_SERVER_ERROR);
       }
     } finally {
       setSending(false);

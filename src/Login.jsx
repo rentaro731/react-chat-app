@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { auth } from "./firebaseConfig";
-import { LOGIN_INITIAL_VALUES, VALIDATE_MESSAGE } from "../constants";
+import {
+  LOGIN_INITIAL_VALUES,
+  VALIDATE_MESSAGE,
+  FETCH_AUTH_ERROR,
+  REGEX,
+} from "../constants";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
@@ -27,7 +32,7 @@ export const Login = () => {
     if (!values.email.includes("@")) {
       errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_AT;
     }
-    if (!VALIDATE_MESSAGE.REGEX.test(values.email)) {
+    if (!REGEX.test(values.email)) {
       errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_CORRECT;
     }
     if (!values.password) {
@@ -60,15 +65,12 @@ export const Login = () => {
       navigate("/chat");
     } catch (error) {
       if (error.code === "auth/wrong-password") {
-        setMessage(VALIDATE_MESSAGE.WRONG_PASSWORD);
-      }
-      if (error.code === "auth/invalid-email") {
-        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_INVALID);
+        setMessage(FETCH_AUTH_ERROR.WRONG_PASSWORD);
       }
       if (error.code === "auth/invalid-credential") {
-        setMessage(VALIDATE_MESSAGE.WRONG_PASSWORD);
+        setMessage(FETCH_AUTH_ERROR.WRONG_PASSWORD);
       } else {
-        setMessage(VALIDATE_MESSAGE.LOGIN_FAILED);
+        setMessage(FETCH_AUTH_ERROR.LOGIN_FAILED);
       }
     } finally {
       setSending(false);
