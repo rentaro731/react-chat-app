@@ -30,3 +30,9 @@ export const VALIDATE_MESSAGE = {
 
   LOGIN_FAILED: "ログインに失敗しました。再度お試しください。",
 };
+
+export const GOOGLE_LOGIN_ERROR_MESSAGE = {
+  POP_UP_CLOSED: "ポップアップを閉じました。",
+  NETWORK_REQUEST_FAILED: "ネットワークエラーです。接続を確認してください。",
+  GOOGLE_LOGIN_FAILED: "ログインに失敗しました。再度お試しください。",
+};
