@@ -53,12 +53,11 @@ export const Login = () => {
     setSending(true);
     setMessage("");
     try {
-      const credential = await signInWithEmailAndPassword(
+      await signInWithEmailAndPassword(
         auth,
         inputValues.email,
         inputValues.password
       );
-      console.log("Signed in user:", credential.user);
       setInputValues(LOGIN_INITIAL_VALUES);
       setInputErrors({});
       setMessage("ログインに成功しました。");

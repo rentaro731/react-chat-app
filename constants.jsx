@@ -23,7 +23,7 @@ export const VALIDATE_MESSAGE = {
   PASSWORD_NUMBER_LIMIT: "パスワードは6文字以上15文字以下で設定してください",
 };
 
-export const FETCH_AUTH_ERROR = {
+export const AUTHENTICATION_ERROR = {
   EMAIL_MESSAGE_SERVER_ERROR: "登録に失敗しました。再度お試しください。",
 
   WRONG_PASSWORD: "メールアドレスまたはパスワードが間違っています。",
