@@ -84,12 +84,13 @@ export const SignApp = () => {
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_SERVER_ERROR);
+        return;
       }
       if (error.code === "auth/invalid-email") {
         setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_INVALID);
-      } else {
-        setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_SERVER_ERROR);
+        return;
       }
+      setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_SERVER_ERROR);
     } finally {
       setSending(false);
     }
