@@ -64,13 +64,14 @@ export const Login = () => {
       navigate("/chat");
     } catch (error) {
       if (error.code === "auth/wrong-password") {
-        setMessage(FETCH_AUTH_ERROR.WRONG_PASSWORD);
+        setMessage(AUTHENTICATION_ERROR.WRONG_PASSWORD);
+        return;
       }
       if (error.code === "auth/invalid-credential") {
-        setMessage(FETCH_AUTH_ERROR.WRONG_PASSWORD);
-      } else {
-        setMessage(FETCH_AUTH_ERROR.LOGIN_FAILED);
+        setMessage(AUTHENTICATION_ERROR.WRONG_PASSWORD);
+        return;
       }
+      setMessage(AUTHENTICATION_ERROR.LOGIN_FAILED);
     } finally {
       setSending(false);
     }
