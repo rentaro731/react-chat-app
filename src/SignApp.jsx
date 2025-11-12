@@ -5,8 +5,8 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import {
   SIGNUP_INITIAL_VALUES,
   VALIDATE_MESSAGE,
-  FETCH_AUTH_ERROR,
   REGEX,
+  AUTHENTICATION_ERROR,
 } from "../constants";
 import { useNavigate } from "react-router-dom";
 
@@ -83,14 +83,14 @@ export const SignApp = () => {
       navigate("/login");
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
-        setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_SERVER_ERROR);
+        setMessage(AUTHENTICATION_ERROR.EMAIL_MESSAGE_SERVER_ERROR);
         return;
       }
       if (error.code === "auth/invalid-email") {
-        setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_INVALID);
+        setMessage(AUTHENTICATION_ERROR.MESSAGE_INVALID);
         return;
       }
-      setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_SERVER_ERROR);
+      setMessage(AUTHENTICATION_ERROR.EMAIL_MESSAGE_SERVER_ERROR);
     } finally {
       setSending(false);
     }

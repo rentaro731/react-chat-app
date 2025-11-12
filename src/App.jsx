@@ -5,6 +5,7 @@ import { SignApp } from "./SignApp";
 import { Home } from "./Home";
 import { Chat } from "./Chat";
 import { GoogleLogin } from "./GoogleLogin";
+import { PrivateRoute } from "./PrivateRoute";
 function App() {
   return (
     <div>

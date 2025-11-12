@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { auth } from "./firebaseConfig";
-import {
-  LOGIN_INITIAL_VALUES,
-  VALIDATE_MESSAGE,
-  FETCH_AUTH_ERROR,
-  REGEX,
-} from "../constants";
+import { LOGIN_INITIAL_VALUES, VALIDATE_MESSAGE, REGEX } from "../constants";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
