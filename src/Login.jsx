@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { auth } from "./firebaseConfig";
-import { LOGIN_INITIAL_VALUES, VALIDATE_MESSAGE } from "../constants";
+import {
+  LOGIN_INITIAL_VALUES,
+  VALIDATE_MESSAGE,
+  FETCH_AUTH_ERROR,
+  REGEX,
+} from "../constants";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
@@ -21,13 +26,13 @@ export const Login = () => {
   //バリデーションチェック
   const validateLogin = (values) => {
     const errors = {};
-    const regex =
-      /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/;
     if (!values.email) {
       errors.email = VALIDATE_MESSAGE.EMAIL_REQUIRED;
-    } else if (!values.email.includes("@")) {
+    }
+    if (!values.email.includes("@")) {
       errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_AT;
-    } else if (!regex.test(values.email)) {
+    }
+    if (!REGEX.test(values.email)) {
       errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_CORRECT;
     }
     if (!values.password) {
@@ -48,26 +53,25 @@ export const Login = () => {
     setSending(true);
     setMessage("");
     try {
-      const credential = await signInWithEmailAndPassword(
+      await signInWithEmailAndPassword(
         auth,
         inputValues.email,
         inputValues.password
       );
-      console.log("Signed in user:", credential.user);
       setInputValues(LOGIN_INITIAL_VALUES);
       setInputErrors({});
       setMessage("ログインに成功しました。");
       navigate("/chat");
     } catch (error) {
       if (error.code === "auth/wrong-password") {
-        setMessage(VALIDATE_MESSAGE.WRONG_PASSWORD);
-      } else if (error.code === "auth/invalid-email") {
-        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_INVALID);
-      } else if (error.code === "auth/invalid-credential") {
-        setMessage(VALIDATE_MESSAGE.WRONG_PASSWORD);
-      } else {
-        setMessage(VALIDATE_MESSAGE.LOGIN_FAILED);
+        setMessage(AUTHENTICATION_ERROR.WRONG_PASSWORD);
+        return;
       }
+      if (error.code === "auth/invalid-credential") {
+        setMessage(AUTHENTICATION_ERROR.WRONG_PASSWORD);
+        return;
+      }
+      setMessage(AUTHENTICATION_ERROR.LOGIN_FAILED);
     } finally {
       setSending(false);
     }

@@ -2,7 +2,12 @@ import { useState } from "react";
 import { db, auth } from "./firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { SIGNUP_INITIAL_VALUES, VALIDATE_MESSAGE } from "../constants";
+import {
+  SIGNUP_INITIAL_VALUES,
+  VALIDATE_MESSAGE,
+  FETCH_AUTH_ERROR,
+  REGEX,
+} from "../constants";
 import { useNavigate } from "react-router-dom";
 
 export const SignApp = () => {
@@ -22,23 +27,25 @@ export const SignApp = () => {
   //バリデーションチェック
   const validateSignApp = (values) => {
     const errors = {};
-    const regex =
-      /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/;
     if (!values.username) {
       errors.username = VALIDATE_MESSAGE.USERNAME_REQUIRED;
     }
     if (!values.email) {
       errors.email = VALIDATE_MESSAGE.EMAIL_REQUIRED;
-    } else if (!values.email.includes("@")) {
+    }
+    if (!values.email.includes("@")) {
       errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_AT;
-    } else if (!regex.test(values.email)) {
+    }
+    if (!REGEX.test(values.email)) {
       errors.email = VALIDATE_MESSAGE.EMAIL_MESSAGE_CORRECT;
     }
     if (!values.password) {
       errors.password = VALIDATE_MESSAGE.PASSWORD_REQUIRED;
-    } else if (values.password.length < 6) {
+    }
+    if (values.password.length < 6) {
       errors.password = VALIDATE_MESSAGE.PASSWORD_NUMBER_LIMIT;
-    } else if (values.password.length > 15) {
+    }
+    if (values.password.length > 15) {
       errors.password = VALIDATE_MESSAGE.PASSWORD_NUMBER_LIMIT;
     }
     return errors;
@@ -76,12 +83,14 @@ export const SignApp = () => {
       navigate("/login");
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
-        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_SERVER_ERROR);
-      } else if (error.code === "auth/invalid-email") {
-        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_INVALID);
-      } else {
-        setMessage(VALIDATE_MESSAGE.EMAIL_MESSAGE_SERVER_ERROR);
+        setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_SERVER_ERROR);
+        return;
       }
+      if (error.code === "auth/invalid-email") {
+        setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_INVALID);
+        return;
+      }
+      setMessage(FETCH_AUTH_ERROR.EMAIL_MESSAGE_SERVER_ERROR);
     } finally {
       setSending(false);
     }

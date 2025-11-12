@@ -8,7 +8,7 @@ export const LOGIN_INITIAL_VALUES = {
   password: "",
 };
 
-// 入力値のバリデーションチェック及びエラーメッセージ
+// 入力値のバリデーションチェックメッセージ
 export const VALIDATE_MESSAGE = {
   USERNAME_REQUIRED: "ユーザー名を入力してください",
 
@@ -21,10 +21,10 @@ export const VALIDATE_MESSAGE = {
   PASSWORD_REQUIRED: "パスワードを入力してください",
 
   PASSWORD_NUMBER_LIMIT: "パスワードは6文字以上15文字以下で設定してください",
+};
 
+export const AUTHENTICATION_ERROR = {
   EMAIL_MESSAGE_SERVER_ERROR: "登録に失敗しました。再度お試しください。",
-
-  EMAIL_MESSAGE_INVALID: "無効なメールアドレスです。",
 
   WRONG_PASSWORD: "メールアドレスまたはパスワードが間違っています。",
 
@@ -36,3 +36,5 @@ export const GOOGLE_LOGIN_ERROR_MESSAGE = {
   NETWORK_REQUEST_FAILED: "ネットワークエラーです。接続を確認してください。",
   GOOGLE_LOGIN_FAILED: "ログインに失敗しました。再度お試しください。",
 };
+export const REGEX =
+  /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/;

@@ -3,8 +3,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Login } from "./Login";
 import { SignApp } from "./SignApp";
 import { Home } from "./Home";
-import { PublicRoute } from "./PublicRoute";
-import { PrivateRoute } from "./PrivateRoute";
 import { Chat } from "./Chat";
 import { GoogleLogin } from "./GoogleLogin";
 function App() {
