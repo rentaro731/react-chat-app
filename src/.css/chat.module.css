@@ -1,0 +1,32 @@
+.wrapper {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  grid-template-rows: 1fr;
+  height: 100vh;
+  background: #303030;
+}
+.sidebar {
+  background: #101010;
+  padding: 8px;
+  display: grid;
+  gap: 8px;
+}
+.navItem {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  color: #101010;
+  font-size: 20px;
+  text-decoration: none;
+  background: transparent;
+}
+.navItemActive {
+  background: #101010;
+}
+.main {
+  background: #1a1a1a;
+  color: #eee;
+  overflow: hidden;
+}
