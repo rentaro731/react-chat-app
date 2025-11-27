@@ -22,7 +22,7 @@ function App() {
             <Route path="talklist" element={<TalkList />} />
             <Route path="friend" element={<Friend />} />
             <Route path="setting" element={<Setting />} />
-            <Route path="/chat/roomlayout/:roomId" element={<RoomLayout />} />
+            <Route path="/chat/room/:roomId" element={<RoomLayout />} />
           </Route>
         </Routes>
       </BrowserRouter>

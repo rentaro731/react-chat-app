@@ -8,7 +8,8 @@ import {
   query,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import t from "./../.css/talkList.module.css";
+import styles from "./../.css/talkList.module.css";
+import { formatTime } from "../../Time";
 
 export const TalkList = () => {
   const [room, setRoom] = useState([]);
@@ -22,7 +23,7 @@ export const TalkList = () => {
     const q = query(
       collection(db, "talkRoom"),
       orderBy("createdAt", "desc"),
-      limit(20)
+      limit(500)
     );
     const unsubscribe = onSnapshot(
       q,
@@ -51,10 +52,10 @@ export const TalkList = () => {
   }
   return (
     // トークルームリストの表示
-    <div className={t.container}>
-      <div className={t.searchBox}>
+    <div className={styles.container}>
+      <div className={styles.searchBox}>
         <input
-          className={t.searchInput}
+          className={styles.searchInput}
           type="text"
           placeholder="トークルームとメッセージ検索"
         />
@@ -62,9 +63,9 @@ export const TalkList = () => {
       <ul>
         {room.map((talkRoom) => (
           <li
-            className={t.li}
+            className={styles.li}
             key={talkRoom.id}
-            onClick={() => navigate(`/chat/roomlayout/${talkRoom.id}`)}
+            onClick={() => navigate(`/chat/room/${talkRoom.id}`)}
           >
             <div>{talkRoom.room}</div>
             <small>{formatTime(talkRoom.createdAt)}</small>
@@ -73,11 +74,4 @@ export const TalkList = () => {
       </ul>
     </div>
   );
-};
-// 時刻を「HH:MM」形式にフォーマットする関数
-const formatTime = (date) => {
-  if (!date) return "";
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  return `${hours}:${minutes}`;
 };

@@ -1,24 +1,24 @@
-import r from "./../.css/room.module.css";
+import styles from "./../.css/room.module.css";
 export const RoomLayout = () => {
   return (
-    <div className={r.container}>
-      <header className={r.header}>
-        <button className={r.returnBtn}>戻る</button>
-        <h2 className={r.roomTitle}>ルーム名</h2>
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <button className={styles.returnBtn}>戻る</button>
+        <h2 className={styles.roomTitle}>ルーム名</h2>
       </header>
-      <main className={r.main}>
-        <div className={r.messages}>
+      <main className={styles.main}>
+        <div className={styles.messages}>
           {/* メッセージ表示エリア */}
-          <div className={r.message}>メッセージ1</div>
+          <div className={styles.message}>メッセージ1</div>
         </div>
-        <div className={r.inputArea}>
+        <div className={styles.inputArea}>
           {/* メッセージ入力エリア */}
           <input
             type="text"
-            className={r.messageInput}
+            className={styles.messageInput}
             placeholder="メッセージを入力"
           />
-          <button className={r.sendBtn}>送信</button>
+          <button className={styles.sendBtn}>送信</button>
         </div>
       </main>
     </div>
