@@ -1,4 +1,4 @@
-import styles from "./../.css/room.module.css";
+import styles from "./../css/room.module.css";
 export const RoomLayout = () => {
   return (
     <div className={styles.container}>

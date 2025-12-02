@@ -1,6 +1,8 @@
 .container {
   width: 100%;
   border-bottom: 1px solid #5d5959;
+  height: 100vh; /* 全画面にしてる例。必要なら固定値でもOK */
+  overflow-y: auto;
 }
 .searchBox {
   width: 100%;
