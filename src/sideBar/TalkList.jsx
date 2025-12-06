@@ -9,8 +9,8 @@ import {
   startAfter,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import styles from "./../css/talkList.module.css";
-import { formatTime } from "../../Time";
+import styles from "../css/talkList.module.css";
+import { formatTime } from "../utils/dateFormatter";
 
 export const TalkList = () => {
   const [room, setRoom] = useState([]);

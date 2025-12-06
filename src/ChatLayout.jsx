@@ -6,9 +6,9 @@ export const ChatLayout = () => {
   const location = useLocation();
   const naviLinks = [
     {
-      to: "/chat/talklist",
+      to: "/chat",
       icon: "💬",
-      isActive: location.pathname.includes("talklist"),
+      isActive: location.pathname === "/chat",
     },
     {
       to: "/chat/friend",
