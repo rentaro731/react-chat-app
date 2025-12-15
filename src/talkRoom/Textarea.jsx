@@ -1,0 +1,46 @@
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import styles from "../css/room.module.css";
+import { useState } from "react";
+import { useUserContext } from "../UserContext";
+import { db } from "../firebaseConfig";
+
+export const Textarea = ({ roomId }) => {
+  const [text, setText] = useState("");
+  const { user } = useUserContext();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const trimedText = text.trim();
+    if (!trimedText) return;
+    if (!roomId) return;
+    // Firestoreにメッセージを追加するロジックをここに実装
+    try {
+      await addDoc(collection(db, "talkRoom", roomId, "messages"), {
+        text: trimedText,
+        createdAt: serverTimestamp(),
+        senderId: user?.uid ?? "guest",
+        icon: user?.icon ?? "photoURL", // 仮のアイコンURL
+      });
+      setText("");
+    } catch (error) {
+      console.error("Error sending message: ", error);
+    }
+  };
+
+  return (
+    <div className={styles.inputArea}>
+      <form className={styles.inputArea} onSubmit={handleSubmit}>
+        <input
+          type="text"
+          className={styles.messageInput}
+          placeholder="メッセージを入力"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <button className={styles.sendBtn} type="submit">
+          送信
+        </button>
+      </form>
+    </div>
+  );
+};
