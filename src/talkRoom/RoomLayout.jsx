@@ -1,7 +1,8 @@
 import { Messages } from "./Messages";
 import { Textarea } from "./Textarea";
 import { useParams, useNavigate } from "react-router-dom";
-import styles from "./../css/room.module.css";
+import styles from "../css/room.module.css";
+
 export const RoomLayout = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();

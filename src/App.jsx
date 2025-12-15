@@ -19,7 +19,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/chat" element={<ChatLayout />}>
             <Route index element={<TalkList />} />
-            <Route path="/chat/talklist" element={<TalkList />} />
             <Route path="/chat/friend" element={<Friend />} />
             <Route path="/chat/setting" element={<Setting />} />
             <Route path="/chat/room/:roomId" element={<RoomLayout />} />
