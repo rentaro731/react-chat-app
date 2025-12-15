@@ -24,3 +24,11 @@
   padding: 10px;
   cursor: pointer;
 }
+.roomItem {
+  display: flex;
+  gap: 10px;
+}
+.roomInfo {
+  display: flex;
+  flex-direction: column;
+}

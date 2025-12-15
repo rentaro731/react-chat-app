@@ -4,6 +4,7 @@ import { collection, limit, orderBy, query, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import styles from "../css/talkList.module.css";
 import { formatTime } from "../utils/dateFormatter";
+import { FaUserCircle } from "react-icons/fa";
 
 export const TalkList = () => {
   const [room, setRoom] = useState([]);
@@ -62,8 +63,13 @@ export const TalkList = () => {
             key={talkRoom.id}
             onClick={() => navigate(`/chat/room/${talkRoom.id}`)}
           >
-            <div>{talkRoom.room}</div>
-            <small>{formatTime(talkRoom.createdAt)}</small>
+            <div className={styles.roomItem}>
+              <FaUserCircle size={32} />
+              <div className={styles.roomInfo}>
+                {talkRoom.room}
+                <small>{formatTime(talkRoom.createdAt)}</small>
+              </div>
+            </div>
           </li>
         ))}
       </ul>
