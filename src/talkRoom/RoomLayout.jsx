@@ -1,4 +1,6 @@
 import styles from "../css/room.module.css";
+import { useParams } from "react-router-dom";
+import { Textarea } from "../talkRoom/Textarea";
 export const RoomLayout = () => {
   const { roomId } = useParams();
   return (

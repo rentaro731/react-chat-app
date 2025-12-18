@@ -21,6 +21,7 @@ export const Textarea = ({ roomId }) => {
         senderId: user?.uid ?? "guest",
         icon: user?.icon ?? "photoURL", // 仮のアイコンURL
       });
+      console.log("メッセージ送信成功");
       setText("");
     } catch (error) {
       console.error("Error sending message: ", error);
