@@ -3,7 +3,7 @@ import { auth } from "./firebaseConfig";
 import {
   LOGIN_INITIAL_VALUES,
   VALIDATE_MESSAGE,
-  FETCH_AUTH_ERROR,
+  AUTHENTICATION_ERROR,
   REGEX,
 } from "../constants";
 import { signInWithEmailAndPassword } from "firebase/auth";
