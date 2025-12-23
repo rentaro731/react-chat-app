@@ -20,26 +20,37 @@ export const RoomLayout = () => {
 
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!roomId) return;
 
     setLoading(true);
     setMessages([]);
+    setError(null);
 
     const q = query(
       collection(db, "talkRoom", roomId, "messages"),
       orderBy("createdAt", "desc"),
       limit(MSG_LIMIT)
     );
-    const unsub = onSnapshot(q, (snapshot) => {
-      console.log(snapshot.docs);
-      const msgs = snapshot.docs.map((doc) => {
-        return { id: doc.id, ...doc.data() };
-      });
-      setMessages(msgs.reverse());
-      setLoading(false);
-    });
+    const unsub = onSnapshot(
+      q,
+      (snapshot) => {
+        console.log(snapshot.docs);
+        const msgs = snapshot.docs.map((doc) => {
+          return { id: doc.id, ...doc.data() };
+        });
+        setMessages(msgs.reverse());
+        setLoading(false);
+      },
+      (err) => {
+        console.error("受信エラー ", err);
+        setError("メッセージの取得中にエラーが発生しました。");
+
+        setLoading(false);
+      }
+    );
     return () => unsub();
   }, [roomId]);
 
@@ -52,6 +63,7 @@ export const RoomLayout = () => {
         <h2 className={styles.roomTitle}>ルーム名</h2>
       </header>
       <main className={styles.main}>
+        {error && <div style={{ color: "red" }}>{error}</div>}
         <Messages messages={messages} loading={loading} />
         <Textarea roomId={roomId} />
       </main>

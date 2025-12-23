@@ -6,6 +6,7 @@ import { db } from "../firebaseConfig";
 
 export const Textarea = ({ roomId }) => {
   const [text, setText] = useState("");
+  const [error, setError] = useState(null);
   const { user } = useUserContext();
 
   const handleSubmit = async (e) => {
@@ -29,12 +30,13 @@ export const Textarea = ({ roomId }) => {
       setText("");
     } catch (error) {
       console.error("Error sending message: ", error);
-      alert("メッセージの送信に失敗しました。オフラインの可能性があります。");
+      setError("メッセージの送信に失敗しました。");
     }
   };
 
   return (
     <div className={styles.inputArea}>
+      {error && <div style={{ color: "red" }}>{error}</div>}
       <form className={styles.inputArea} onSubmit={handleSubmit}>
         <input
           type="text"
