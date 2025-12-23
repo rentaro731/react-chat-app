@@ -14,6 +14,11 @@ export const Textarea = ({ roomId }) => {
     if (!trimedText) return;
     if (!roomId) return;
     // Firestoreにメッセージを追加するロジックをここに実装
+
+    if (!navigator.onLine) {
+      alert("オフラインのため、メッセージを送信できません。");
+      return;
+    }
     try {
       await addDoc(collection(db, "talkRoom", roomId, "messages"), {
         text: trimedText,
@@ -24,6 +29,7 @@ export const Textarea = ({ roomId }) => {
       setText("");
     } catch (error) {
       console.error("Error sending message: ", error);
+      alert("メッセージの送信に失敗しました。オフラインの可能性があります。");
     }
   };
 
