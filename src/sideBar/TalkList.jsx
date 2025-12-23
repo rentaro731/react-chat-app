@@ -18,8 +18,7 @@ export const TalkList = () => {
       try {
         const q = query(
           collection(db, "talkRoom"),
-          orderBy("createdAt", "desc"),
-          limit(25)
+          orderBy("createdAt", "desc")
         );
         const querySnapshot = await getDocs(q);
         const newArr = querySnapshot.docs.map((doc) => ({
