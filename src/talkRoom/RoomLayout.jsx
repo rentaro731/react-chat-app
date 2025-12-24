@@ -1,18 +1,10 @@
 import styles from "../css/room.module.css";
 import { useEffect, useState } from "react";
-import {
-  collection,
-  query,
-  orderBy,
-  limit,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Messages } from "./Messages";
 import { Textarea } from "./Textarea";
 import { useParams, useNavigate } from "react-router-dom";
-
-const MSG_LIMIT = 20;
 
 export const RoomLayout = () => {
   const { roomId } = useParams();
@@ -31,8 +23,7 @@ export const RoomLayout = () => {
 
     const q = query(
       collection(db, "talkRoom", roomId, "messages"),
-      orderBy("createdAt", "desc"),
-      limit(MSG_LIMIT)
+      orderBy("createdAt", "desc")
     );
     const unsub = onSnapshot(
       q,
