@@ -1,14 +1,20 @@
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, doc, serverTimestamp } from "firebase/firestore";
 import styles from "../css/room.module.css";
-import { useState } from "react";
+import { use, useState } from "react";
 import { useUserContext } from "../UserContext";
 import { db } from "../firebaseConfig";
+
+const DEFAULT_ICON = "default-avatar";
 
 export const Textarea = ({ roomId }) => {
   const [text, setText] = useState("");
   const { user } = useUserContext();
 
   const handleSubmit = async (e) => {
+    if (!user?.uid) {
+      alert("ログインしてください");
+      return;
+    }
     e.preventDefault();
     const trimedText = text.trim();
     if (!trimedText) return;
@@ -19,13 +25,25 @@ export const Textarea = ({ roomId }) => {
       return;
     }
     try {
-      await addDoc(collection(db, "talkRoom", roomId, "messages"), {
-        text: trimedText,
-        createdAt: serverTimestamp(),
-        senderId: user?.uid ?? "guest",
-        icon: user?.icon ?? "photoURL", // 仮のアイコンURL
+      const docRef = await addDoc(
+        collection(db, "talkRoom", roomId, "messages"),
+        {
+          text: trimedText,
+          createdAt: serverTimestamp(),
+          senderId: user?.uid,
+          icon: user?.icon ?? DEFAULT_ICON,
+        }
+      );
+      console.log("メッセージ送信成功", {
+        FireBaseService: "Firestore",
+        collectionPath: `talkRoom/${roomId}/messages`,
+        Data: {
+          docId: docRef.id,
+          text: trimedText,
+          senderId: user?.uid,
+          icon: user?.icon ?? DEFAULT_ICON,
+        },
       });
-      console.log("メッセージ送信成功");
       setText("");
     } catch (error) {
       console.error("Error sending message: ", error);
