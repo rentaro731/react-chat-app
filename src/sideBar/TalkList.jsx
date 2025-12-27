@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, limit, orderBy, query, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import styles from "../css/talkList.module.css";
+import styles from "../css/talklist.module.css";
 import { formatTime } from "../utils/dateFormatter";
 
 export const TalkList = () => {
