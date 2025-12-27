@@ -16,15 +16,13 @@ export const RoomLayout = () => {
 
   useEffect(() => {
     if (!roomId) return;
-    if (!navigator.onLine) {
-      setError("オフラインのため、メッセージを取得できません。");
-      setLoading(false);
-      return;
-    }
-
     setLoading(true);
     setMessages([]);
     setError(null);
+
+    if (!navigator.onLine) {
+      alert("オフラインです。最新のメッセージを取得できない可能性があります。");
+    }
 
     const q = query(
       collection(db, "talkRoom", roomId, "messages"),
