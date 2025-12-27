@@ -16,6 +16,11 @@ export const RoomLayout = () => {
 
   useEffect(() => {
     if (!roomId) return;
+    if (!navigator.onLine) {
+      setError("オフラインのため、メッセージを取得できません。");
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setMessages([]);
@@ -28,7 +33,6 @@ export const RoomLayout = () => {
     const unsub = onSnapshot(
       q,
       (snapshot) => {
-        console.log(snapshot.docs);
         const msgs = snapshot.docs.map((doc) => {
           return { id: doc.id, ...doc.data() };
         });
