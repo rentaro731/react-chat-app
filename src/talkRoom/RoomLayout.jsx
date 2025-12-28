@@ -1,5 +1,5 @@
 import styles from "../css/room.module.css";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Messages } from "./Messages";
@@ -13,16 +13,13 @@ export const RoomLayout = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
     if (!roomId) return;
     setLoading(true);
     setMessages([]);
     setError(null);
-
-    if (!navigator.onLine) {
-      alert("オフラインです。最新のメッセージを取得できない可能性があります。");
-    }
 
     const q = query(
       collection(db, "talkRoom", roomId, "messages"),
@@ -47,6 +44,21 @@ export const RoomLayout = () => {
     return () => unsub();
   }, [roomId]);
 
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [isOnline]);
+
+  if (!isOnline) {
+    alert("オフラインです");
+  }
   return (
     <div className={styles.container}>
       <header className={styles.header}>
