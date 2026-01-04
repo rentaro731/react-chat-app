@@ -1,4 +1,9 @@
-import React from "react";
+import Avatar from "react-avatar";
+import { FaUserEdit } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { useUserContext } from "../UserContext";
+import { setDoc, serverTimestamp, doc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 
 export const Setting = () => {
   const [name, setName] = useState("");
@@ -9,7 +14,27 @@ export const Setting = () => {
       setName(user.name);
     }
   }, [user]);
-  if (loading) return <div>loading...</div>;
+
+  const handleSave = async () => {
+    if (!user?.uid) return;
+    if (!name.trim()) return;
+    // 保存処理をここに実装
+    setSave(true);
+    await setDoc(
+      doc(db, "users", user.uid),
+      {
+        name: name.trim(),
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+    setSave(false);
+    alert("プロフィールが保存されました");
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div style={{ width: "100%" }}>
@@ -41,12 +66,14 @@ export const Setting = () => {
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button
+          onClick={handleSave}
+          disabled={save}
           style={{
             marginTop: "8px",
             padding: "8px 16px",
           }}
         >
-          保存
+          {save ? "保存中..." : "保存"}
         </button>
       </div>
     </div>
