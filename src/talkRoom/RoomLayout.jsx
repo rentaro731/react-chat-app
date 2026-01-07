@@ -1,5 +1,8 @@
 import styles from "../css/room.module.css";
+import { useParams } from "react-router-dom";
+import { Textarea } from "../talkRoom/Textarea";
 export const RoomLayout = () => {
+  const { roomId } = useParams();
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -11,15 +14,7 @@ export const RoomLayout = () => {
           {/* メッセージ表示エリア */}
           <div className={styles.message}>メッセージ1</div>
         </div>
-        <div className={styles.inputArea}>
-          {/* メッセージ入力エリア */}
-          <input
-            type="text"
-            className={styles.messageInput}
-            placeholder="メッセージを入力"
-          />
-          <button className={styles.sendBtn}>送信</button>
-        </div>
+        <Textarea roomId={roomId} />
       </main>
     </div>
   );
