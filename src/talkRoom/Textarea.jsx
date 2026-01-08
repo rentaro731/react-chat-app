@@ -20,7 +20,6 @@ export const Textarea = ({ roomId }) => {
     const trimedText = text.trim();
     if (!trimedText) return;
     if (!roomId) return;
-    // Firestoreにメッセージを追加するロジックをここに実装
 
     if (!navigator.onLine) {
       alert("オフラインのため、メッセージを送信できません。");
