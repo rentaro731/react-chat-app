@@ -85,3 +85,8 @@
   align-self: flex-start;
   display: flex;
 }
+.errorMsg {
+  color: red;
+  font-size: 12px;
+  text-align: center;
+}

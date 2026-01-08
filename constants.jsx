@@ -1,3 +1,4 @@
+// サインアップ・ログイン時のエラー系
 export const SIGNUP_INITIAL_VALUES = {
   username: "",
   email: "",
@@ -32,3 +33,16 @@ export const AUTHENTICATION_ERROR = {
 };
 export const REGEX =
   /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/;
+
+// RoomLayout： ここからチャットメッセージ取得エラー系
+export const CHAT_ERROR_MESSAGES = {
+  PERMISSION_DENIED:
+    "メッセージの取得権限がありません。ログイン状態を確認してください。",
+
+  NETWORK_ERROR:
+    "ネットワークエラーが発生しました。通信環境を確認してください。",
+
+  NOT_FOUND: "データが見つかりませんでした。",
+
+  UNKNOWN_ERROR: "エラーが発生しました。もう一度試してね。",
+};

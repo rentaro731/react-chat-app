@@ -1,6 +1,6 @@
 import { addDoc, collection, doc, serverTimestamp } from "firebase/firestore";
 import styles from "../css/room.module.css";
-import { use, useState } from "react";
+import { useState } from "react";
 import { useUserContext } from "../UserContext";
 import { db } from "../firebaseConfig";
 
@@ -54,7 +54,7 @@ export const Textarea = ({ roomId }) => {
 
   return (
     <div className={styles.inputArea}>
-      {error && <div style={{ color: "red" }}>{error}</div>}
+      {error && <div className={styles.errorMsg}>{error}</div>}
       <form className={styles.inputArea} onSubmit={handleSubmit}>
         <input
           type="text"
