@@ -8,7 +8,7 @@ import styles from "../css/setting.module.css";
 
 export const Setting = () => {
   const [name, setName] = useState("");
-  const [save, setSave] = useState(false);
+  const [isSave, setIsSave] = useState(false);
   const { user, loading } = useUserContext();
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export const Setting = () => {
     if (!user?.uid) return;
     if (!name.trim()) return;
     // 保存処理をここに実装
-    setSave(true);
+    setIsSave(true);
     await setDoc(
       doc(db, "users", user.uid),
       {
@@ -30,7 +30,7 @@ export const Setting = () => {
       },
       { merge: true }
     );
-    setSave(false);
+    setIsSave(false);
     alert("プロフィールが保存されました");
   };
 
@@ -60,10 +60,10 @@ export const Setting = () => {
       <div className={styles.buttonContainer}>
         <button
           onClick={handleSave}
-          disabled={save}
+          disabled={isSave}
           className={styles.saveButton}
         >
-          {save ? "保存中..." : "保存"}
+          {isSave ? "保存中..." : "保存"}
         </button>
       </div>
     </div>
