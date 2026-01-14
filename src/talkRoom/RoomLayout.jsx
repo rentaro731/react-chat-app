@@ -78,8 +78,6 @@ export const RoomLayout = () => {
           },
           (err) => {
             console.error("受信エラー ", err);
-            console.log("🔥 err.code =", err?.code);
-            console.log("🔥 err.message =", err?.message);
             setError(errorHandler(err));
 
             setLoading(false);

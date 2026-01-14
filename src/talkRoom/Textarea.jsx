@@ -1,4 +1,10 @@
-import { addDoc, collection, doc, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
 import styles from "../css/room.module.css";
 import { useState } from "react";
 import { useUserContext } from "../UserContext";
@@ -34,6 +40,13 @@ export const Textarea = ({ roomId }) => {
           senderId: user?.uid,
           icon: user?.icon ?? DEFAULT_ICON,
         }
+      );
+      await setDoc(
+        doc(db, "talkRoom", roomId),
+        {
+          lastMessageAt: serverTimestamp(),
+        },
+        { merge: true }
       );
       console.log("メッセージ送信成功", {
         FireBaseService: "Firestore",
