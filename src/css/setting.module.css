@@ -1,0 +1,36 @@
+.main {
+  width: 100%;
+}
+.title {
+  text-align: center;
+}
+.avatarContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+.avatarWrapper {
+  position: relative;
+}
+.faUserEdit {
+  position: absolute;
+  right: -24px;
+  top: 10px;
+}
+.inputContainer {
+  margin-top: 16px;
+  text-align: center;
+}
+.inputName {
+  width: 80%;
+  padding: 8px;
+  margin-top: 8px;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+}
+.saveButton {
+  margin-top: 8px;
+  padding: 8px 16px;
+}

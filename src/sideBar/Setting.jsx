@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { useUserContext } from "../UserContext";
 import { setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import styles from "../css/setting.module.css";
 
 export const Setting = () => {
   const [name, setName] = useState("");
+  const [save, setSave] = useState(false);
   const { user, loading } = useUserContext();
 
   useEffect(() => {
@@ -37,41 +39,29 @@ export const Setting = () => {
   }
 
   return (
-    <div style={{ width: "100%" }}>
-      <h2 style={{ textAlign: "center" }}>プロフィール設定画面</h2>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginTop: "8px",
-        }}
-      >
-        <div style={{ position: "relative" }}>
+    <div className={styles.main}>
+      <h2 className={styles.title}>プロフィール設定画面</h2>
+      <div className={styles.avatarContainer}>
+        <div className={styles.avatarWrapper}>
           <Avatar name={name || "User"} size="80" round={true} />
-          <FaUserEdit
-            size={24}
-            style={{ position: "absolute", right: "-24px", top: "10px" }}
-          />
+          <FaUserEdit size={24} className={styles.faUserEdit} />
         </div>
       </div>
-      <div style={{ marginTop: "16px", textAlign: "center" }}>
+      <div className={styles.inputContainer}>
         <label>表示名</label>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           type="text"
           placeholder="ニックネームを入力"
-          style={{ width: "80%", padding: "8px", marginTop: "8px" }}
+          className={styles.inputName}
         />
       </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div className={styles.buttonContainer}>
         <button
           onClick={handleSave}
           disabled={save}
-          style={{
-            marginTop: "8px",
-            padding: "8px 16px",
-          }}
+          className={styles.saveButton}
         >
           {save ? "保存中..." : "保存"}
         </button>
