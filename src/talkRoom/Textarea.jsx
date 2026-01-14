@@ -48,16 +48,7 @@ export const Textarea = ({ roomId }) => {
         },
         { merge: true }
       );
-      console.log("メッセージ送信成功", {
-        FireBaseService: "Firestore",
-        collectionPath: `talkRoom/${roomId}/messages`,
-        Data: {
-          docId: docRef.id,
-          text: trimedText,
-          senderId: user?.uid,
-          icon: user?.icon ?? DEFAULT_ICON,
-        },
-      });
+
       setText("");
     } catch (error) {
       console.error("Error sending message: ", error);
