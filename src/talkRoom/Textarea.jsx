@@ -1,6 +1,12 @@
-import { addDoc, collection, doc, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
 import styles from "../css/room.module.css";
-import { use, useState } from "react";
+import { useState } from "react";
 import { useUserContext } from "../UserContext";
 import { db } from "../firebaseConfig";
 
@@ -8,6 +14,7 @@ const DEFAULT_ICON = "default-avatar";
 
 export const Textarea = ({ roomId }) => {
   const [text, setText] = useState("");
+  const [error, setError] = useState(null);
   const { user } = useUserContext();
 
   const handleSubmit = async (e) => {
@@ -34,25 +41,24 @@ export const Textarea = ({ roomId }) => {
           icon: user?.icon ?? DEFAULT_ICON,
         }
       );
-      console.log("メッセージ送信成功", {
-        FireBaseService: "Firestore",
-        collectionPath: `talkRoom/${roomId}/messages`,
-        Data: {
-          docId: docRef.id,
-          text: trimedText,
-          senderId: user?.uid,
-          icon: user?.icon ?? DEFAULT_ICON,
+      await setDoc(
+        doc(db, "talkRoom", roomId),
+        {
+          lastMessageAt: serverTimestamp(),
         },
-      });
+        { merge: true }
+      );
+
       setText("");
     } catch (error) {
       console.error("Error sending message: ", error);
-      alert("メッセージの送信に失敗しました。");
+      setError("メッセージの送信に失敗しました。");
     }
   };
 
   return (
     <div className={styles.inputArea}>
+      {error && <div className={styles.errorMsg}>{error}</div>}
       <form className={styles.inputArea} onSubmit={handleSubmit}>
         <input
           type="text"

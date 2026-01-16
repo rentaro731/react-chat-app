@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, limit, orderBy, query, getDocs } from "firebase/firestore";
+import { collection, orderBy, query, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import styles from "../css/talklist.module.css";
 import { formatTime } from "../utils/dateFormatter";
+import { FaUserCircle } from "react-icons/fa";
 
 export const TalkList = () => {
   const [room, setRoom] = useState([]);
@@ -18,12 +19,13 @@ export const TalkList = () => {
       try {
         const q = query(
           collection(db, "talkRoom"),
-          orderBy("createdAt", "desc")
+          orderBy("lastMessageAt", "desc")
         );
         const querySnapshot = await getDocs(q);
         const newArr = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
+          lastMessageAt: doc.data().lastMessageAt?.toDate?.() ?? null,
           createdAt: doc.data().createdAt?.toDate?.() ?? null,
         }));
         setRoom(newArr);
@@ -61,8 +63,15 @@ export const TalkList = () => {
             key={talkRoom.id}
             onClick={() => navigate(`/chat/room/${talkRoom.id}`)}
           >
-            <div>{talkRoom.room}</div>
-            <small>{formatTime(talkRoom.createdAt)}</small>
+            <div className={styles.roomItem}>
+              <FaUserCircle size={32} />
+              <div className={styles.roomInfo}>
+                {talkRoom.room}
+                <small>
+                  {formatTime(talkRoom.lastMessageAt ?? talkRoom.createdAt)}
+                </small>
+              </div>
+            </div>
           </li>
         ))}
       </ul>
