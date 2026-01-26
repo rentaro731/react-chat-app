@@ -2,25 +2,33 @@ import styles from "../css/room.module.css";
 import { useEffect, useRef, useState } from "react";
 import {
   collection,
+  updateDoc,
   query,
   orderBy,
   onSnapshot,
   doc,
   getDoc,
+  getDocs,
+  arrayRemove,
+  where,
+  documentId,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Messages } from "./Messages";
 import { Textarea } from "./Textarea";
 import { useParams, useNavigate } from "react-router-dom";
 import { CHAT_ERROR_MESSAGES } from "../../constants.jsx";
+import { useUserContext } from "../UserContext";
 
 export const RoomLayout = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
+  const { user } = useUserContext();
 
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [roomUsersInfo, setRoomUsersInfo] = useState([]);
 
   const errorHandler = (err) => {
     const code = err?.code || "";
@@ -40,6 +48,23 @@ export const RoomLayout = () => {
   };
 
   const unsubscribeRef = useRef(null);
+
+  const exitRoom = async () => {
+    try {
+      if (!user?.uid) return;
+      const roomRef = doc(db, "talkRoom", roomId);
+
+      await updateDoc(roomRef, {
+        roomUsers: arrayRemove(user.uid),
+      });
+      console.log("ルームから退出しました");
+
+      navigate(-1);
+    } catch (err) {
+      console.error("ルーム退出エラー ", err);
+    }
+  };
+
   useEffect(() => {
     if (!roomId) return;
 
@@ -62,6 +87,19 @@ export const RoomLayout = () => {
           setLoading(false);
           return;
         }
+
+        // ルームユーザーを取得
+        const usersQuery = query(
+          collection(db, "users"),
+          where(documentId(), "in", roomSnap.data()?.roomUsers || [])
+        );
+        const usersSnap = await getDocs(usersQuery);
+        const usersDoc = usersSnap.docs.map((doc) => ({
+          uid: doc.id,
+          ...doc.data(),
+        }));
+        setRoomUsersInfo(usersDoc);
+        console.log("ルームユーザー情報:", usersDoc);
 
         const q = query(
           collection(db, "talkRoom", roomId, "messages"),
@@ -97,18 +135,21 @@ export const RoomLayout = () => {
       }
     };
   }, [roomId]);
-
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <button className={styles.returnBtn} onClick={() => navigate(-1)}>
+        <button className={styles.returnBtn} onClick={() => exitRoom()}>
           戻る
         </button>
         <h2 className={styles.roomTitle}>ルーム名</h2>
       </header>
       <main className={styles.main}>
         {error && <div className={styles.errorMsg}>{error}</div>}
-        <Messages messages={messages} loading={loading} />
+        <Messages
+          messages={messages}
+          loading={loading}
+          roomUsersInfo={roomUsersInfo}
+        />
         <Textarea roomId={roomId} />
       </main>
     </div>
