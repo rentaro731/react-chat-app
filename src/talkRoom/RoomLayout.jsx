@@ -25,6 +25,7 @@ export const RoomLayout = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [roomUsersInfo, setRoomUsersInfo] = useState([]);
 
   const errorHandler = (err) => {
     const code = err?.code || "";
@@ -44,6 +45,7 @@ export const RoomLayout = () => {
   };
 
   const unsubscribeRef = useRef(null);
+
   useEffect(() => {
     if (!roomId) return;
 
@@ -66,6 +68,19 @@ export const RoomLayout = () => {
           setLoading(false);
           return;
         }
+
+        // ルームユーザーを取得
+        const usersQuery = query(
+          collection(db, "users"),
+          where(documentId(), "in", roomSnap.data()?.roomUsers || [])
+        );
+        const usersSnap = await getDocs(usersQuery);
+        const usersDoc = usersSnap.docs.map((doc) => ({
+          uid: doc.id,
+          ...doc.data(),
+        }));
+        setRoomUsersInfo(usersDoc);
+        console.log("ルームユーザー情報:", usersDoc);
 
         const q = query(
           collection(db, "talkRoom", roomId, "messages"),
@@ -151,7 +166,11 @@ export const RoomLayout = () => {
       </header>
       <main className={styles.main}>
         {error && <div className={styles.errorMsg}>{error}</div>}
-        <Messages messages={messages} loading={loading} />
+        <Messages
+          messages={messages}
+          loading={loading}
+          roomUsersInfo={roomUsersInfo}
+        />
         <Textarea roomId={roomId} />
       </main>
     </div>

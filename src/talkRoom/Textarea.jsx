@@ -1,5 +1,6 @@
 import {
   addDoc,
+  getDoc,
   collection,
   doc,
   serverTimestamp,
@@ -9,8 +10,6 @@ import styles from "../css/room.module.css";
 import { useState } from "react";
 import { useUserContext } from "../UserContext";
 import { db } from "../firebaseConfig";
-
-const DEFAULT_ICON = "default-avatar";
 
 export const Textarea = ({ roomId }) => {
   const [text, setText] = useState("");
@@ -38,7 +37,7 @@ export const Textarea = ({ roomId }) => {
           text: trimedText,
           createdAt: serverTimestamp(),
           senderId: user?.uid,
-          icon: user?.icon ?? DEFAULT_ICON,
+          senderName: user?.name || "名無し",
         }
       );
       await setDoc(
