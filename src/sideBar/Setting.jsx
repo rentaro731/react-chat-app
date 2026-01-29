@@ -124,7 +124,12 @@ export const Setting = () => {
     // パスワード変更のロジックをここに追加
     try {
       await sendPasswordResetEmail(auth, email);
-      alert("パスワードリセットメールを送信しました。");
+      alert(
+        "パスワードリセットメールを送信しました。パスワード変更後に再度ログインしてください。"
+      );
+
+      await signOut(auth);
+      navigate("/");
     } catch (error) {
       console.error("パスワードリセットメールの送信に失敗しました:", error);
     }
