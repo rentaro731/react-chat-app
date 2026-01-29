@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { FaUserEdit } from "react-icons/fa";
+import { useState, useEffect } from "react";
 import { useUserContext } from "../UserContext";
+import { setDoc, serverTimestamp, doc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 import styles from "../css/setting.module.css";
 
 export const Setting = () => {
   const [name, setName] = useState("");
+  const [isSave, setIsSave] = useState(false);
   const { user, loading } = useUserContext();
 
   useEffect(() => {
@@ -13,7 +16,27 @@ export const Setting = () => {
       setName(user.name);
     }
   }, [user]);
-  if (loading) return <div>loading...</div>;
+
+  const handleSave = async () => {
+    if (!user?.uid) return;
+    if (!name.trim()) return;
+    // 保存処理をここに実装
+    setIsSave(true);
+    await setDoc(
+      doc(db, "users", user.uid),
+      {
+        name: name.trim(),
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+    setIsSave(false);
+    alert("プロフィールが保存されました");
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className={styles.main}>
@@ -35,7 +58,13 @@ export const Setting = () => {
         />
       </div>
       <div className={styles.buttonContainer}>
-        <button className={styles.saveButton}>保存</button>
+        <button
+          onClick={handleSave}
+          disabled={isSave}
+          className={styles.saveButton}
+        >
+          {isSave ? "保存中..." : "保存"}
+        </button>
       </div>
     </div>
   );
