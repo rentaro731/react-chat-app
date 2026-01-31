@@ -1,16 +1,46 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, orderBy, query, getDocs } from "firebase/firestore";
+import {
+  collection,
+  orderBy,
+  query,
+  getDocs,
+  updateDoc,
+  arrayUnion,
+  doc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import styles from "../css/talklist.module.css";
 import { formatTime } from "../utils/dateFormatter";
 import { FaUserCircle } from "react-icons/fa";
+import { useUserContext } from "../UserContext";
 
 export const TalkList = () => {
   const [room, setRoom] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+
+  const { user } = useUserContext();
+
+  const addUsers = async (clickedRoomId) => {
+    if (!user) return;
+
+    try {
+      const roomUsersRef = doc(db, "talkRoom", clickedRoomId);
+      await updateDoc(roomUsersRef, {
+        roomUsers: arrayUnion(user.uid),
+        updatedAt: serverTimestamp(),
+      });
+      alert(`${user.name}をルームに追加しました`);
+      navigate(`/chat/room/${clickedRoomId}`);
+    } catch (error) {
+      console.error("ユーザー追加エラー: ", error);
+      setError("ユーザーの追加に失敗しました。");
+    }
+  };
 
   //初回データ取得
   useEffect(() => {
@@ -61,7 +91,7 @@ export const TalkList = () => {
           <li
             className={styles.li}
             key={talkRoom.id}
-            onClick={() => navigate(`/chat/room/${talkRoom.id}`)}
+            onClick={() => addUsers(talkRoom.id)}
           >
             <div className={styles.roomItem}>
               <FaUserCircle size={32} />
@@ -75,6 +105,7 @@ export const TalkList = () => {
           </li>
         ))}
       </ul>
+      {error && <div className={styles.errorMsg}>{error}</div>}
     </div>
   );
 };
