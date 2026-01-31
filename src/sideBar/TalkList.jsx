@@ -9,6 +9,7 @@ import {
   arrayUnion,
   doc,
   serverTimestamp,
+  addDoc,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import styles from "../css/talklist.module.css";
@@ -20,6 +21,8 @@ export const TalkList = () => {
   const [room, setRoom] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [name, setName] = useState("");
 
   const navigate = useNavigate();
 
@@ -39,6 +42,34 @@ export const TalkList = () => {
     } catch (error) {
       console.error("ユーザー追加エラー: ", error);
       setError("ユーザーの追加に失敗しました。");
+    }
+  };
+
+  const createRoom = async () => {
+    setIsCreating((prev) => !prev);
+  };
+
+  const handleCreateRoom = async () => {
+    const roomName = name.trim();
+    if (!roomName) {
+      setError("ルーム名を入力してください。");
+      return;
+    }
+    try {
+      const newRoomDoc = await addDoc(collection(db, "talkRoom"), {
+        room: roomName,
+        createdAt: serverTimestamp(),
+        lastMessageAt: serverTimestamp(),
+        roomUsers: [user.uid],
+      });
+      setName("");
+      setIsCreating(false);
+      alert(`${roomName}でトークルームを作成しました`);
+      navigate(`/chat/room/${newRoomDoc.id}`);
+    } catch (error) {
+      console.error("トークルーム作成エラー:", error);
+      setError("トークルームの作成に失敗しました。");
+      setIsCreating(false);
     }
   };
 
@@ -105,7 +136,21 @@ export const TalkList = () => {
           </li>
         ))}
       </ul>
-      {error && <div className={styles.errorMsg}>{error}</div>}
+      <div>
+        <button onClick={createRoom}>新規作成</button>
+        {isCreating && (
+          <div>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              type="text"
+              placeholder="ルーム名"
+            />
+            <button onClick={() => handleCreateRoom()}>作成！</button>
+          </div>
+        )}
+        {error && <div className={styles.errorMsg}>{error}</div>}
+      </div>
     </div>
   );
 };
