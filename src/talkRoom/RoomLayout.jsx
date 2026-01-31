@@ -7,16 +7,20 @@ import {
   onSnapshot,
   doc,
   getDoc,
+  arrayRemove,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Messages } from "./Messages";
 import { Textarea } from "./Textarea";
 import { useParams, useNavigate } from "react-router-dom";
 import { CHAT_ERROR_MESSAGES } from "../../constants.jsx";
+import { useUserContext } from "../UserContext";
 
 export const RoomLayout = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
+  const { user } = useUserContext();
 
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,10 +102,25 @@ export const RoomLayout = () => {
     };
   }, [roomId]);
 
+  const exitRoom = async () => {
+    try {
+      if (!user?.uid) return;
+      const roomRef = doc(db, "talkRoom", roomId);
+
+      await updateDoc(roomRef, {
+        roomUsers: arrayRemove(user.uid),
+      });
+      alert(`${user.name}はルームを退出しました`);
+      navigate(-1);
+    } catch (error) {
+      console.error("ルーム退出エラー ", error);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <button className={styles.returnBtn} onClick={() => navigate(-1)}>
+        <button className={styles.returnBtn} onClick={() => exitRoom()}>
           戻る
         </button>
         <h2 className={styles.roomTitle}>ルーム名</h2>
