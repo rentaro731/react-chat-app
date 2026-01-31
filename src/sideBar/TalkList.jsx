@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, orderBy, query, getDocs } from "firebase/firestore";
+import {
+  collection,
+  orderBy,
+  query,
+  getDocs,
+  updateDoc,
+  arrayUnion,
+  doc,
+  serverTimestamp,
+  addDoc,
+} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import styles from "../css/talklist.module.css";
 import { formatTime } from "../utils/dateFormatter";
@@ -9,8 +19,58 @@ import { FaUserCircle } from "react-icons/fa";
 export const TalkList = () => {
   const [room, setRoom] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [name, setName] = useState("");
 
   const navigate = useNavigate();
+
+  const { user } = useUserContext();
+
+  const addUsers = async (clickedRoomId) => {
+    if (!user) return;
+
+    try {
+      const roomUsersRef = doc(db, "talkRoom", clickedRoomId);
+      await updateDoc(roomUsersRef, {
+        roomUsers: arrayUnion(user.uid),
+        updatedAt: serverTimestamp(),
+      });
+      alert(`${user.name}をルームに追加しました`);
+      navigate(`/chat/room/${clickedRoomId}`);
+    } catch (error) {
+      console.error("ユーザー追加エラー: ", error);
+      setError("ユーザーの追加に失敗しました。");
+    }
+  };
+
+  const createRoom = async () => {
+    setIsCreating((prev) => !prev);
+  };
+
+  const handleCreateRoom = async () => {
+    const roomName = name.trim();
+    if (!roomName) {
+      setError("ルーム名を入力してください。");
+      return;
+    }
+    try {
+      const newRoomDoc = await addDoc(collection(db, "talkRoom"), {
+        room: roomName,
+        createdAt: serverTimestamp(),
+        lastMessageAt: serverTimestamp(),
+        roomUsers: [user.uid],
+      });
+      setName("");
+      setIsCreating(false);
+      alert(`${roomName}でトークルームを作成しました`);
+      navigate(`/chat/room/${newRoomDoc.id}`);
+    } catch (error) {
+      console.error("トークルーム作成エラー:", error);
+      setError("トークルームの作成に失敗しました。");
+      setIsCreating(false);
+    }
+  };
 
   //初回データ取得
   useEffect(() => {
@@ -75,6 +135,21 @@ export const TalkList = () => {
           </li>
         ))}
       </ul>
+      <div>
+        <button onClick={createRoom}>新規作成</button>
+        {isCreating && (
+          <div>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              type="text"
+              placeholder="ルーム名"
+            />
+            <button onClick={() => handleCreateRoom()}>作成！</button>
+          </div>
+        )}
+        {error && <div className={styles.errorMsg}>{error}</div>}
+      </div>
     </div>
   );
 };
