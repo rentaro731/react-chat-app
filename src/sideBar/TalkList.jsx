@@ -26,7 +26,13 @@ export const TalkList = () => {
   const { user } = useUserContext();
 
   const addUsers = async (clickedRoomId) => {
-    if (!user) return;
+    if (!user) {
+      return navigate("/login");
+    }
+    if (!navigator.onLine) {
+      alert("オフラインのため、トークルームに参加できません。");
+      return;
+    }
 
     try {
       const roomUsersRef = doc(db, "talkRoom", clickedRoomId);
@@ -34,7 +40,14 @@ export const TalkList = () => {
         roomUsers: arrayUnion(user.uid),
         updatedAt: serverTimestamp(),
       });
-      alert(`${user.name}をルームに追加しました`);
+      console.log(
+        roomUsersRef,
+        {
+          roomUsers: arrayUnion(user.uid),
+          updatedAt: serverTimestamp(),
+        },
+        "ユーザーがトークルームに追加されました"
+      );
       navigate(`/chat/room/${clickedRoomId}`);
     } catch (error) {
       console.error("ユーザー追加エラー: ", error);
