@@ -20,7 +20,7 @@ export const TalkList = () => {
   const [room, setRoom] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isCreating, setIsCreating] = useState(false);
+  const [isOpenCreateRoomForm, setIsOpenCreateRoomForm] = useState(false);
   const [name, setName] = useState("");
 
   const navigate = useNavigate();
@@ -44,11 +44,12 @@ export const TalkList = () => {
     }
   };
 
-  const createRoom = async () => {
-    setIsCreating((prev) => !prev);
+  const toggleCreateRoomForm = async () => {
+    setIsOpenCreateRoomForm((prev) => !prev);
   };
 
-  const handleCreateRoom = async () => {
+  const handleCreateRoom = async (e) => {
+    e.preventDefault();
     const roomName = name.trim();
     if (!roomName) {
       setError("ルーム名を入力してください。");
@@ -62,13 +63,13 @@ export const TalkList = () => {
         roomUsers: [user.uid],
       });
       setName("");
-      setIsCreating(false);
+      setIsOpenCreateRoomForm(false);
       alert(`${roomName}でトークルームを作成しました`);
       navigate(`/chat/room/${newRoomDoc.id}`);
     } catch (error) {
       console.error("トークルーム作成エラー:", error);
       setError("トークルームの作成に失敗しました。");
-      setIsCreating(false);
+      setIsOpenCreateRoomForm(false);
     }
   };
 
@@ -136,17 +137,17 @@ export const TalkList = () => {
         ))}
       </ul>
       <div>
-        <button onClick={createRoom}>新規作成</button>
-        {isCreating && (
-          <div>
+        <button onClick={toggleCreateRoomForm}>新規作成</button>
+        {isOpenCreateRoomForm && (
+          <form onSubmit={handleCreateRoom}>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
               type="text"
               placeholder="ルーム名"
             />
-            <button onClick={() => handleCreateRoom()}>作成！</button>
-          </div>
+            <button type="submit">作成！</button>
+          </form>
         )}
         {error && <div className={styles.errorMsg}>{error}</div>}
       </div>
