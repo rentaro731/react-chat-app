@@ -26,7 +26,7 @@ export const TalkList = () => {
   const { user } = useUserContext();
 
   const addUsers = async (clickedRoomId) => {
-    if (!user) {
+    if (!user?.uid) {
       return navigate("/login");
     }
     if (!navigator.onLine) {
