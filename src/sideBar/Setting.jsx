@@ -55,11 +55,13 @@ export const Setting = () => {
   // メールアドレス変更ボタン
   const inputEmail = () => {
     setIsShowingEmail((prev) => !prev);
+
     setNewEmail("");
   };
 
   // 再認証・メールアドレス変更処理
-  const changeEmail = async () => {
+  const changeEmail = async (e) => {
+    e.preventDefault();
     const currentUser = auth.currentUser;
     if (!currentUser) {
       alert("ユーザーが認証されていません。");
@@ -85,7 +87,7 @@ export const Setting = () => {
       alert(
         "メールアドレス変更リンクを送信しました。リンクをクリックして変更を完了後、再度ログインしてください。"
       );
-
+      setIsSave(false);
       await signOut(auth);
       navigate("/");
 
@@ -113,7 +115,7 @@ export const Setting = () => {
 
   // パスワード変更処理
   const changePassword = async () => {
-    const email = user?.email;
+    const email = auth.currentUser?.email;
 
     console.log("reset target email:", email);
 
@@ -127,7 +129,7 @@ export const Setting = () => {
       alert(
         "パスワードリセットメールを送信しました。パスワード変更後に再度ログインしてください。"
       );
-
+      setIsSave(false);
       await signOut(auth);
       navigate("/");
     } catch (error) {
@@ -135,15 +137,6 @@ export const Setting = () => {
     }
   };
 
-  // ログアウト処理
-  const logOut = async () => {
-    try {
-      await signOut(auth);
-      navigate("/");
-    } catch (error) {
-      console.log("ログアウト失敗", error);
-    }
-  };
   return (
     <div className={styles.main}>
       <h2 className={styles.title}>プロフィール設定画面</h2>
@@ -187,11 +180,11 @@ export const Setting = () => {
               <div className={styles.userInfo}>
                 <div>ユーザー名: {user?.name}</div>
                 <div>
-                  メールアドレス: {user?.email}
+                  メールアドレス: {auth.currentUser?.email}
                   <button onClick={inputEmail}>メールアドレスの変更</button>
                 </div>
                 {isShowingEmail && (
-                  <div>
+                  <form onSubmit={changeEmail}>
                     <input
                       value={newEmail}
                       onChange={(e) => setNewEmail(e.target.value)}
@@ -206,20 +199,21 @@ export const Setting = () => {
                       placeholder="現在のパスワードを入力"
                       className={styles.inputPassword}
                     />
-                    <button onClick={changeEmail}>変更</button>
-                  </div>
+                    <button type="submit" disabled={isSave}>
+                      変更
+                    </button>
+                  </form>
                 )}
                 <div className={styles.Password}>
                   パスワードの変更:
-                  <button onClick={changePassword}>変更</button>
+                  <button onClick={changePassword} disabled={isSave}>
+                    変更
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         )}
-      </div>
-      <div className={styles.logoutBtn}>
-        <button onClick={logOut}>ログアウト</button>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, useEffect, useRef } from "react";
+import { useState, createContext, useContext, useEffect } from "react";
 import { auth, db } from "./firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
@@ -23,17 +23,10 @@ export const UserProvider = ({ children }) => {
         const userRef = doc(db, "users", uid);
 
         const unsubscribeUser = onSnapshot(userRef, async (snap) => {
-          const dbEmail = snap.exists() ? snap.data()?.email ?? "" : "";
-          const authEmail = firebaseUser.email ?? "";
-
-          if (snap.exists() && authEmail && dbEmail !== authEmail) {
-            // await updateDoc(userRef, { email: authEmail });//ここで必要？
-            console.log("更新されました");
-          }
           setUser({
             uid: uid,
             ...(snap.exists() ? snap.data() : {}),
-            email: authEmail,
+            email: firebaseUser.email ?? "",
           });
         });
         return () => {
@@ -41,7 +34,7 @@ export const UserProvider = ({ children }) => {
         };
       } catch (error) {
         console.error("UserContext error:", error);
-        alert(error?.code ?? error?.message ?? "UserContext error");
+        setUser({ uid, email: firebaseUser.email ?? "" });
       } finally {
         setLoading(false);
       }
