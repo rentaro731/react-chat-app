@@ -9,6 +9,7 @@ import { Friend } from "./sideBar/Friend";
 import { Setting } from "./sideBar/Setting";
 import { RoomLayout } from "./talkRoom/RoomLayout";
 import { UserProvider } from "./UserContext";
+import { RequireAuth } from "./RequireAuth";
 
 function App() {
   return (
@@ -19,7 +20,15 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/sign" element={<SignApp />} />
             <Route path="/" element={<Home />} />
-            <Route path="/chat" element={<ChatLayout />}>
+
+            <Route
+              path="/chat"
+              element={
+                <RequireAuth>
+                  <ChatLayout />
+                </RequireAuth>
+              }
+            >
               <Route index element={<TalkList />} />
               <Route path="/chat/talklist" element={<TalkList />} />
               <Route path="/chat/friend" element={<Friend />} />
