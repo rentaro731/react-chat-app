@@ -26,9 +26,6 @@ export const TalkList = () => {
   const { user } = useUserContext();
 
   const addUsers = async (clickedRoomId) => {
-    if (!user?.uid) {
-      return navigate("/login");
-    }
     if (!navigator.onLine) {
       alert("オフラインのため、トークルームに参加できません。");
       return;
