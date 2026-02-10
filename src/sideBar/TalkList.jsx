@@ -29,7 +29,10 @@ export const TalkList = () => {
   const { user } = useUserContext();
 
   const addUsers = async (clickedRoomId) => {
-    if (!user) return;
+    if (!navigator.onLine) {
+      alert("オフラインのため、トークルームに参加できません。");
+      return;
+    }
 
     try {
       await runTransaction(db, async (transaction) => {
