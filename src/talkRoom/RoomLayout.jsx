@@ -132,8 +132,15 @@ export const RoomLayout = () => {
           roomUsers: updatedRoomUsers,
           updatedAt: serverTimestamp(),
         });
+        console.log(
+          roomRef,
+          {
+            roomUsers: updatedRoomUsers,
+            updatedAt: serverTimestamp(),
+          },
+          "ルームを退出しました"
+        );
       });
-
       navigate(-1);
     } catch (error) {
       console.error("ルーム退出エラー ", error);
