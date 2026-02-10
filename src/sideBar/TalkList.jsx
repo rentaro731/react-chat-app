@@ -9,6 +9,7 @@ import {
   arrayUnion,
   doc,
   serverTimestamp,
+  Timestamp,
   addDoc,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
@@ -61,7 +62,14 @@ export const TalkList = () => {
         room: roomName,
         createdAt: serverTimestamp(),
         lastMessageAt: serverTimestamp(),
-        roomUsers: [user.uid],
+        roomUsers: [
+          {
+            userId: user.uid,
+            isEntry: true,
+            joinedAt: Timestamp.now(),
+          },
+        ],
+        updatedAt: serverTimestamp(),
       });
       setName("");
       setIsOpenCreateRoomForm(false);
