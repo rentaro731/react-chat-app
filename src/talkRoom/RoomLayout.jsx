@@ -7,8 +7,9 @@ import {
   onSnapshot,
   doc,
   getDoc,
-  arrayRemove,
-  updateDoc,
+  serverTimestamp,
+  Timestamp,
+  runTransaction,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Messages } from "./Messages";
@@ -107,10 +108,32 @@ export const RoomLayout = () => {
       if (!user?.uid) return;
       const roomRef = doc(db, "talkRoom", roomId);
 
-      await updateDoc(roomRef, {
-        roomUsers: arrayRemove(user.uid),
+      await runTransaction(db, async (transaction) => {
+        const roomDoc = await transaction.get(roomRef);
+        if (!roomDoc.exists()) {
+          throw "ルームが存在しません";
+        }
+        const roomData = roomDoc.data();
+        const roomUsers = Array.isArray(roomData.roomUsers)
+          ? roomData.roomUsers
+          : [];
+        const updatedRoomUsers = roomUsers.map((roomUser) => {
+          if (roomUser.userId === user.uid) {
+            return {
+              ...roomUser,
+              isEntry: false,
+              exitedAt: Timestamp.now(),
+            };
+          }
+          return roomUser;
+        });
+
+        transaction.update(roomRef, {
+          roomUsers: updatedRoomUsers,
+          updatedAt: serverTimestamp(),
+        });
       });
-      alert(`${user.name}はルームを退出しました`);
+
       navigate(-1);
     } catch (error) {
       console.error("ルーム退出エラー ", error);

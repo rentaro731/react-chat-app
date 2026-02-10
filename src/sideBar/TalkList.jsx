@@ -5,8 +5,8 @@ import {
   orderBy,
   query,
   getDocs,
-  updateDoc,
-  arrayUnion,
+  Timestamp,
+  runTransaction,
   doc,
   serverTimestamp,
   addDoc,
@@ -32,12 +32,43 @@ export const TalkList = () => {
     if (!user) return;
 
     try {
-      const roomUsersRef = doc(db, "talkRoom", clickedRoomId);
-      await updateDoc(roomUsersRef, {
-        roomUsers: arrayUnion(user.uid),
-        updatedAt: serverTimestamp(),
+      await runTransaction(db, async (transaction) => {
+        const roomRef = doc(db, "talkRoom", clickedRoomId);
+        const roomDoc = await transaction.get(roomRef);
+        if (!roomDoc.exists()) {
+          throw new Error("ルームが存在しません");
+        }
+        const roomData = roomDoc.data();
+        const roomUsers = Array.isArray(roomData.roomUsers)
+          ? roomData.roomUsers
+          : [];
+        const isUserInRoom = roomUsers.findIndex((u) => u.userId === user.uid);
+        const entryRoomUsers =
+          isUserInRoom >= 0
+            ? roomUsers.map((roomUser, index) =>
+                index === isUserInRoom
+                  ? {
+                      ...roomUser,
+                      isEntry: true,
+                      joinedAt: Timestamp.now(),
+                    }
+                  : roomUser
+              )
+            : [
+                ...roomUsers,
+                {
+                  userId: user.uid,
+                  isEntry: true,
+                  joinedAt: Timestamp.now(),
+                },
+              ];
+
+        transaction.update(roomRef, {
+          roomUsers: entryRoomUsers,
+          updatedAt: serverTimestamp(),
+        });
       });
-      alert(`${user.name}をルームに追加しました`);
+
       navigate(`/chat/room/${clickedRoomId}`);
     } catch (error) {
       console.error("ユーザー追加エラー: ", error);
@@ -60,8 +91,16 @@ export const TalkList = () => {
         room: roomName,
         createdAt: serverTimestamp(),
         lastMessageAt: serverTimestamp(),
-        roomUsers: [user.uid],
+        roomUsers: [
+          {
+            userId: user.uid,
+            isEntry: true,
+            joinedAt: Timestamp.now(),
+          },
+        ],
+        updatedAt: serverTimestamp(),
       });
+
       setName("");
       setIsCreating(false);
       alert(`${roomName}でトークルームを作成しました`);
