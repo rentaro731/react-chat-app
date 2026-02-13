@@ -45,26 +45,18 @@ export const TalkList = () => {
         const roomUsers = Array.isArray(roomData.roomUsers)
           ? roomData.roomUsers
           : [];
-        const isUserInRoom = roomUsers.findIndex((u) => u.userId === user.uid);
-        const entryRoomUsers =
-          isUserInRoom >= 0
-            ? roomUsers.map((roomUser, index) =>
-                index === isUserInRoom
-                  ? {
-                      ...roomUser,
-                      isEntry: true,
-                      joinedAt: Timestamp.now(),
-                    }
-                  : roomUser
-              )
-            : [
-                ...roomUsers,
-                {
-                  userId: user.uid,
-                  isEntry: true,
-                  joinedAt: Timestamp.now(),
-                },
-              ];
+        const exists = roomUsers.find((u) => u.userId === user.uid);
+
+        const entryRoomUsers = exists
+          ? roomUsers.map((u) =>
+              u.userId === user.uid
+                ? { ...u, isEntry: true, joinedAt: Timestamp.now() }
+                : u
+            )
+          : [
+              ...roomUsers,
+              { userId: user.uid, isEntry: true, joinedAt: Timestamp.now() },
+            ];
 
         transaction.update(roomRef, {
           roomUsers: entryRoomUsers,
