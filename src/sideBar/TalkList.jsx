@@ -5,9 +5,6 @@ import {
   orderBy,
   query,
   getDocs,
-  updateDoc,
-  arrayUnion,
-  doc,
   serverTimestamp,
   Timestamp,
   addDoc,
@@ -28,23 +25,6 @@ export const TalkList = () => {
   const navigate = useNavigate();
 
   const { user } = useUserContext();
-
-  const addUsers = async (clickedRoomId) => {
-    if (!user) return;
-
-    try {
-      const roomUsersRef = doc(db, "talkRoom", clickedRoomId);
-      await updateDoc(roomUsersRef, {
-        roomUsers: arrayUnion(user.uid),
-        updatedAt: serverTimestamp(),
-      });
-      alert(`${user.name}をルームに追加しました`);
-      navigate(`/chat/room/${clickedRoomId}`);
-    } catch (error) {
-      console.error("ユーザー追加エラー: ", error);
-      setError("ユーザーの追加に失敗しました。");
-    }
-  };
 
   const toggleCreateRoomForm = async () => {
     setIsOpenCreateRoomForm((prev) => !prev);
