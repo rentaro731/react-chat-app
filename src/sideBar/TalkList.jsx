@@ -49,9 +49,7 @@ export const TalkList = () => {
 
         const entryRoomUsers = exists
           ? roomUsers.map((u) =>
-              u.userId === user.uid
-                ? { ...u, isEntry: true, joinedAt: Timestamp.now() }
-                : u
+              u.userId === user.uid ? { ...u, isEntry: true } : u
             )
           : [
               ...roomUsers,
