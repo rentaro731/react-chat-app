@@ -21,6 +21,7 @@ export const RoomLayout = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [roomTitle, setRoomTitle] = useState("");
 
   const errorHandler = (err) => {
     const code = err?.code || "";
@@ -63,6 +64,10 @@ export const RoomLayout = () => {
           return;
         }
 
+        const roomData = roomSnap.data();
+        const roomName = roomData.room || "ルーム名";
+        setRoomTitle(roomName);
+
         const q = query(
           collection(db, "talkRoom", roomId, "messages"),
           orderBy("createdAt", "desc")
@@ -104,7 +109,7 @@ export const RoomLayout = () => {
         <button className={styles.returnBtn} onClick={() => navigate(-1)}>
           戻る
         </button>
-        <h2 className={styles.roomTitle}>ルーム名</h2>
+        <h2 className={styles.roomTitle}>{roomTitle}</h2>
       </header>
       <main className={styles.main}>
         {error && <div className={styles.errorMsg}>{error}</div>}
