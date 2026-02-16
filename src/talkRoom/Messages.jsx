@@ -11,7 +11,7 @@ export const Messages = ({ messages, loading }) => {
     if (!loading) {
       scrollRef.current.scrollIntoView({ behavior: "auto" });
     }
-  }, [messages]);
+  }, [loading, messages]);
 
   if (loading) {
     return <div>Loading messages...</div>;
