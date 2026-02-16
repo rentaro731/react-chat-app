@@ -60,14 +60,6 @@ export const TalkList = () => {
           roomUsers: entryRoomUsers,
           updatedAt: serverTimestamp(),
         });
-        console.log(
-          roomRef,
-          {
-            roomUsers: entryRoomUsers,
-            updatedAt: serverTimestamp(),
-          },
-          "ユーザーをルームに追加しました"
-        );
       });
       navigate(`/chat/room/${clickedRoomId}`);
     } catch (error) {
