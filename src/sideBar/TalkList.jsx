@@ -5,8 +5,8 @@ import {
   orderBy,
   query,
   getDocs,
-  updateDoc,
-  arrayUnion,
+  Timestamp,
+  runTransaction,
   doc,
   serverTimestamp,
   addDoc,
@@ -29,15 +29,38 @@ export const TalkList = () => {
   const { user } = useUserContext();
 
   const addUsers = async (clickedRoomId) => {
-    if (!user) return;
+    if (!navigator.onLine) {
+      alert("オフラインのため、トークルームに参加できません。");
+      return;
+    }
 
     try {
-      const roomUsersRef = doc(db, "talkRoom", clickedRoomId);
-      await updateDoc(roomUsersRef, {
-        roomUsers: arrayUnion(user.uid),
-        updatedAt: serverTimestamp(),
+      await runTransaction(db, async (transaction) => {
+        const roomRef = doc(db, "talkRoom", clickedRoomId);
+        const roomDoc = await transaction.get(roomRef);
+        if (!roomDoc.exists()) {
+          throw new Error("ルームが存在しません");
+        }
+        const roomData = roomDoc.data();
+        const roomUsers = Array.isArray(roomData.roomUsers)
+          ? roomData.roomUsers
+          : [];
+        const exists = roomUsers.find((u) => u.userId === user.uid);
+
+        const entryRoomUsers = exists
+          ? roomUsers.map((u) =>
+              u.userId === user.uid ? { ...u, isEntry: true } : u
+            )
+          : [
+              ...roomUsers,
+              { userId: user.uid, isEntry: true, joinedAt: Timestamp.now() },
+            ];
+
+        transaction.update(roomRef, {
+          roomUsers: entryRoomUsers,
+          updatedAt: serverTimestamp(),
+        });
       });
-      alert(`${user.name}をルームに追加しました`);
       navigate(`/chat/room/${clickedRoomId}`);
     } catch (error) {
       console.error("ユーザー追加エラー: ", error);
@@ -61,8 +84,16 @@ export const TalkList = () => {
         room: roomName,
         createdAt: serverTimestamp(),
         lastMessageAt: serverTimestamp(),
-        roomUsers: [user.uid],
+        roomUsers: [
+          {
+            userId: user.uid,
+            isEntry: true,
+            joinedAt: Timestamp.now(),
+          },
+        ],
+        updatedAt: serverTimestamp(),
       });
+
       setName("");
       setIsOpenCreateRoomForm(false);
       alert(`${roomName}でトークルームを作成しました`);

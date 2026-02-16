@@ -13,6 +13,7 @@
 }
 .returnBtn {
   border: none;
+  text-decoration: none;
   background-color: transparent;
   color: #fbfbfb;
   font-size: 15px;
