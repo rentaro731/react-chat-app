@@ -65,8 +65,14 @@ export const RoomLayout = () => {
         }
 
         const roomData = roomSnap.data();
-        const roomName = roomData.room || "ルーム名";
+        const roomName = roomData.room;
         setRoomTitle(roomName);
+
+        if (!roomData || !roomData.room) {
+          setError(CHAT_ERROR_MESSAGES.NOT_FOUND);
+          setLoading(false);
+          return;
+        }
 
         const q = query(
           collection(db, "talkRoom", roomId, "messages"),
