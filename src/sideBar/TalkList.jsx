@@ -93,7 +93,6 @@ export const TalkList = () => {
         ],
         updatedAt: serverTimestamp(),
       });
-
       setName("");
       setIsOpenCreateRoomForm(false);
       alert(`${roomName}でトークルームを作成しました`);
