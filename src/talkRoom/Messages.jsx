@@ -3,7 +3,7 @@ import { useUserContext } from "../UserContext";
 import Avatar from "react-avatar";
 import { useRef, useEffect } from "react";
 
-export const Messages = ({ messages, loading, roomUsersInfo }) => {
+export const Messages = ({ messages, loading, roomUserList }) => {
   const scrollRef = useRef(null);
   const { user } = useUserContext();
 
@@ -22,7 +22,7 @@ export const Messages = ({ messages, loading, roomUsersInfo }) => {
       {messages.map((msg) => {
         const isMyMessage = msg.senderId === user?.uid;
 
-        const senderUser = roomUsersInfo.find(
+        const senderUser = roomUserList.find(
           (user) => user.uid === msg.senderId
         );
         const displayName = senderUser?.name ?? msg.senderName ?? "名無し";

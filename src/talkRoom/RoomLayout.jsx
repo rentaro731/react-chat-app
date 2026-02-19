@@ -10,6 +10,9 @@ import {
   serverTimestamp,
   Timestamp,
   runTransaction,
+  where,
+  documentId,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Messages } from "./Messages";
@@ -25,7 +28,7 @@ export const RoomLayout = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [roomUsersInfo, setRoomUsersInfo] = useState([]);
+  const [roomUserList, setRoomUserList] = useState([]);
 
   const errorHandler = (err) => {
     const code = err?.code || "";
@@ -72,15 +75,18 @@ export const RoomLayout = () => {
         // ルームユーザーを取得
         const usersQuery = query(
           collection(db, "users"),
-          where(documentId(), "in", roomSnap.data()?.roomUsers || [])
+          where(
+            documentId(),
+            "in",
+            roomSnap.data()?.roomUsers?.map((u) => u.userId) || []
+          )
         );
         const usersSnap = await getDocs(usersQuery);
         const usersDoc = usersSnap.docs.map((doc) => ({
           uid: doc.id,
           ...doc.data(),
         }));
-        setRoomUsersInfo(usersDoc);
-        console.log("ルームユーザー情報:", usersDoc);
+        setRoomUserList(usersDoc);
 
         const q = query(
           collection(db, "talkRoom", roomId, "messages"),
@@ -169,7 +175,7 @@ export const RoomLayout = () => {
         <Messages
           messages={messages}
           loading={loading}
-          roomUsersInfo={roomUsersInfo}
+          roomUserList={roomUserList}
         />
         <Textarea roomId={roomId} />
       </main>
