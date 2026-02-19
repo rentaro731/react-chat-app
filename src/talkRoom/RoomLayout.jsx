@@ -7,16 +7,20 @@ import {
   onSnapshot,
   doc,
   getDoc,
+  serverTimestamp,
+  Timestamp,
+  runTransaction,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Messages } from "./Messages";
 import { Textarea } from "./Textarea";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { CHAT_ERROR_MESSAGES } from "../../constants.jsx";
+import { useUserContext } from "../UserContext";
 
 export const RoomLayout = () => {
   const { roomId } = useParams();
-  const navigate = useNavigate();
+  const { user } = useUserContext();
 
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,12 +102,51 @@ export const RoomLayout = () => {
     };
   }, [roomId]);
 
+  const exitRoom = async () => {
+    try {
+      if (!user?.uid) return;
+      const roomRef = doc(db, "talkRoom", roomId);
+
+      await runTransaction(db, async (transaction) => {
+        const roomDoc = await transaction.get(roomRef);
+        if (!roomDoc.exists()) {
+          throw "ルームが存在しません";
+        }
+        const roomData = roomDoc.data();
+        const roomUsers = Array.isArray(roomData.roomUsers)
+          ? roomData.roomUsers
+          : [];
+        const updatedRoomUsers = roomUsers.map((roomUser) => {
+          if (roomUser.userId === user.uid) {
+            return {
+              ...roomUser,
+              isEntry: false,
+              exitedAt: Timestamp.now(),
+            };
+          }
+          return roomUser;
+        });
+
+        transaction.update(roomRef, {
+          roomUsers: updatedRoomUsers,
+          updatedAt: serverTimestamp(),
+        });
+      });
+    } catch (error) {
+      console.error("ルーム退出エラー ", error);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <button className={styles.returnBtn} onClick={() => navigate(-1)}>
+        <Link
+          to="/chat/talklist"
+          className={styles.returnBtn}
+          onClick={() => exitRoom()}
+        >
           戻る
-        </button>
+        </Link>
         <h2 className={styles.roomTitle}>ルーム名</h2>
       </header>
       <main className={styles.main}>
