@@ -3,9 +3,8 @@ import { FaUserEdit } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { useUserContext } from "../UserContext";
 import { setDoc, serverTimestamp, doc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { db, auth } from "../firebaseConfig";
 import styles from "../css/setting.module.css";
-import { auth } from "../firebaseConfig";
 import {
   sendPasswordResetEmail,
   verifyBeforeUpdateEmail,
@@ -137,6 +136,16 @@ export const Setting = () => {
     }
   };
 
+  // ログアウト処理
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigate("/");
+    } catch (error) {
+      console.error("ログアウトに失敗しました:", error);
+    }
+  };
+
   return (
     <div className={styles.main}>
       <h2 className={styles.title}>プロフィール設定画面</h2>
@@ -214,6 +223,9 @@ export const Setting = () => {
             </div>
           </div>
         )}
+      </div>
+      <div className={styles.signOutContainer}>
+        <button onClick={handleSignOut}>ログアウト</button>
       </div>
     </div>
   );

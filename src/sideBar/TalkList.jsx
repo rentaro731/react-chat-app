@@ -5,8 +5,10 @@ import {
   orderBy,
   query,
   getDocs,
-  serverTimestamp,
   Timestamp,
+  runTransaction,
+  doc,
+  serverTimestamp,
   addDoc,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
@@ -25,6 +27,46 @@ export const TalkList = () => {
   const navigate = useNavigate();
 
   const { user } = useUserContext();
+
+  const addUsers = async (clickedRoomId) => {
+    if (!navigator.onLine) {
+      alert("オフラインのため、トークルームに参加できません。");
+      return;
+    }
+
+    try {
+      await runTransaction(db, async (transaction) => {
+        const roomRef = doc(db, "talkRoom", clickedRoomId);
+        const roomDoc = await transaction.get(roomRef);
+        if (!roomDoc.exists()) {
+          throw new Error("ルームが存在しません");
+        }
+        const roomData = roomDoc.data();
+        const roomUsers = Array.isArray(roomData.roomUsers)
+          ? roomData.roomUsers
+          : [];
+        const exists = roomUsers.find((u) => u.userId === user.uid);
+
+        const entryRoomUsers = exists
+          ? roomUsers.map((u) =>
+              u.userId === user.uid ? { ...u, isEntry: true } : u
+            )
+          : [
+              ...roomUsers,
+              { userId: user.uid, isEntry: true, joinedAt: Timestamp.now() },
+            ];
+
+        transaction.update(roomRef, {
+          roomUsers: entryRoomUsers,
+          updatedAt: serverTimestamp(),
+        });
+      });
+      navigate(`/chat/room/${clickedRoomId}`);
+    } catch (error) {
+      console.error("ユーザー追加エラー: ", error);
+      setError("ユーザーの追加に失敗しました。");
+    }
+  };
 
   const toggleCreateRoomForm = async () => {
     setIsOpenCreateRoomForm((prev) => !prev);
@@ -111,7 +153,7 @@ export const TalkList = () => {
           <li
             className={styles.li}
             key={talkRoom.id}
-            onClick={() => navigate(`/chat/room/${talkRoom.id}`)}
+            onClick={() => addUsers(talkRoom.id)}
           >
             <div className={styles.roomItem}>
               <FaUserCircle size={32} />
