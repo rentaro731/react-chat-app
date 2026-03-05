@@ -25,6 +25,7 @@ export const RoomLayout = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [roomTitle, setRoomTitle] = useState("");
 
   const errorHandler = (err) => {
     const code = err?.code || "";
@@ -66,6 +67,16 @@ export const RoomLayout = () => {
           setLoading(false);
           return;
         }
+
+        const roomData = roomSnap.data();
+        const roomName = roomData.room;
+
+        if (!roomData || !roomData.room) {
+          setError(CHAT_ERROR_MESSAGES.NOT_FOUND);
+          setLoading(false);
+          return;
+        }
+        setRoomTitle(roomName);
 
         const q = query(
           collection(db, "talkRoom", roomId, "messages"),
@@ -147,7 +158,7 @@ export const RoomLayout = () => {
         >
           戻る
         </Link>
-        <h2 className={styles.roomTitle}>ルーム名</h2>
+        <h2 className={styles.roomTitle}>{roomTitle}</h2>
       </header>
       <main className={styles.main}>
         {error && <div className={styles.errorMsg}>{error}</div>}
