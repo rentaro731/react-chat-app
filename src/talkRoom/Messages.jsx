@@ -25,7 +25,7 @@ export const Messages = ({ messages, loading, roomUserList }) => {
         const senderUser = roomUserList.find(
           (user) => user.uid === msg.senderId
         );
-        const displayName = senderUser?.name ?? msg.senderName ?? "名無し";
+        const displayName = senderUser?.name ?? "名無し";
 
         return (
           <div
