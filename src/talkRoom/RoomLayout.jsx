@@ -168,7 +168,7 @@ export const RoomLayout = () => {
         >
           戻る
         </Link>
-        <h2 className={styles.roomTitle}>ルーム名</h2>
+        <h2 className={styles.roomTitle}>{roomTitle}</h2>
       </header>
       <main className={styles.main}>
         {error && <div className={styles.errorMsg}>{error}</div>}
