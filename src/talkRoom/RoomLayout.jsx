@@ -10,6 +10,9 @@ import {
   serverTimestamp,
   Timestamp,
   runTransaction,
+  where,
+  documentId,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Messages } from "./Messages";
@@ -25,7 +28,7 @@ export const RoomLayout = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [roomTitle, setRoomTitle] = useState("");
+  const [roomUserList, setRoomUserList] = useState([]);
 
   const errorHandler = (err) => {
     const code = err?.code || "";
@@ -45,6 +48,7 @@ export const RoomLayout = () => {
   };
 
   const unsubscribeRef = useRef(null);
+
   useEffect(() => {
     if (!roomId) return;
 
@@ -68,15 +72,21 @@ export const RoomLayout = () => {
           return;
         }
 
-        const roomData = roomSnap.data();
-        const roomName = roomData.room;
-
-        if (!roomData || !roomData.room) {
-          setError(CHAT_ERROR_MESSAGES.NOT_FOUND);
-          setLoading(false);
-          return;
-        }
-        setRoomTitle(roomName);
+        // ルームユーザーを取得
+        const usersQuery = query(
+          collection(db, "users"),
+          where(
+            documentId(),
+            "in",
+            roomSnap.data()?.roomUsers?.map((u) => u.userId) || []
+          )
+        );
+        const usersSnap = await getDocs(usersQuery);
+        const usersDoc = usersSnap.docs.map((doc) => ({
+          uid: doc.id,
+          ...doc.data(),
+        }));
+        setRoomUserList(usersDoc);
 
         const q = query(
           collection(db, "talkRoom", roomId, "messages"),
@@ -162,7 +172,11 @@ export const RoomLayout = () => {
       </header>
       <main className={styles.main}>
         {error && <div className={styles.errorMsg}>{error}</div>}
-        <Messages messages={messages} loading={loading} />
+        <Messages
+          messages={messages}
+          loading={loading}
+          roomUserList={roomUserList}
+        />
         <Textarea roomId={roomId} />
       </main>
     </div>

@@ -135,9 +135,6 @@ export const TalkList = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-  if (!room.length) {
-    return <div>トークルームがありません</div>;
-  }
   return (
     // トークルームリストの表示
     <div className={styles.container}>
@@ -148,25 +145,29 @@ export const TalkList = () => {
           placeholder="トークルームとメッセージ検索"
         />
       </div>
-      <ul>
-        {room.map((talkRoom) => (
-          <li
-            className={styles.li}
-            key={talkRoom.id}
-            onClick={() => addUsers(talkRoom.id)}
-          >
-            <div className={styles.roomItem}>
-              <FaUserCircle size={32} />
-              <div className={styles.roomInfo}>
-                {talkRoom.room}
-                <small>
-                  {formatTime(talkRoom.lastMessageAt ?? talkRoom.createdAt)}
-                </small>
+      {room.length > 0 ? (
+        <ul>
+          {room.map((talkRoom) => (
+            <li
+              className={styles.li}
+              key={talkRoom.id}
+              onClick={() => addUsers(talkRoom.id)}
+            >
+              <div className={styles.roomItem}>
+                <FaUserCircle size={32} />
+                <div className={styles.roomInfo}>
+                  {talkRoom.room}
+                  <small>
+                    {formatTime(talkRoom.lastMessageAt ?? talkRoom.createdAt)}
+                  </small>
+                </div>
               </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div>トークルームがありません</div>
+      )}
       <div>
         <button onClick={toggleCreateRoomForm}>新規作成</button>
         {isOpenCreateRoomForm && (
