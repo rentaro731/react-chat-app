@@ -1,0 +1,99 @@
+.main {
+  width: 100%;
+}
+.title {
+  text-align: center;
+}
+.avatarContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+.avatarWrapper {
+  position: relative;
+}
+.faUserEdit {
+  position: absolute;
+  right: -24px;
+  top: 10px;
+}
+.inputContainer {
+  margin-top: 16px;
+  text-align: center;
+}
+.inputName {
+  width: 80%;
+  padding: 8px;
+  margin-top: 8px;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+}
+.saveButton {
+  margin-top: 8px;
+  padding: 8px 16px;
+}
+/* モーダル関連のスタイル */
+.userInfoContainer {
+  margin-top: 16px;
+  text-align: center;
+}
+.Overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+.modal {
+  width: min(500px, 90vw);
+  background-color: #1e1e1e;
+  color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.modalHeader {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+.modalHeader h3 {
+  margin: 0 auto;
+  text-align: center;
+}
+.closeButton {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  justify-self: end;
+}
+.userInfo {
+  margin-top: 8px;
+  text-align: center;
+}
+.inputEmail {
+  padding: 4px;
+  margin-top: 8px;
+  margin-right: 4px;
+  border-radius: 4px;
+}
+.inputPassword {
+  padding: 4px;
+  margin-top: 8px;
+  margin-right: 4px;
+  border-radius: 4px;
+}
+.Password {
+  margin-top: 4px;
+  margin-right: 4px;
+}
+.signOutContainer {
+  margin-top: 16px;
+  text-align: center;
+}
